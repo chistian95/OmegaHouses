@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import es.elzoo.omega.Mensajes;
 import es.elzoo.omega.Permisos;
 import es.elzoo.omega.casa.CasaAsistenteCrear;
+import es.elzoo.omega.casa.Clase;
 
 public class ComandoHouse implements CommandExecutor {
 	@Override
@@ -98,8 +99,14 @@ public class ComandoHouse implements CommandExecutor {
 			return;
 		}
 		
-		//TODO Check si ya hay una clase con ese id
-		//TODO Crear clase
+		Optional<Clase> clase = Clase.getClaseById(id);
+		if(clase.isPresent()) {
+			player.sendMessage(ChatColor.RED + "There is already a class with that ID.");
+			return;
+		}
+		
+		new Clase(id, price, chests);
+		player.sendMessage(ChatColor.GREEN + "Class created.");
 	}
 	
 	private static void mostrarAyuda(Player player) {
