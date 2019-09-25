@@ -2,9 +2,12 @@ package es.elzoo.omega.casa;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.block.Sign;
 
 public class Casa {
 	private static List<Casa> casas;
@@ -34,7 +37,29 @@ public class Casa {
 	public Casa(Clase clase, UUID owner, Location pos1, Location pos2, Location cartel) {		
 		this(clase, clase.getNextNumero(), owner, pos1, pos2, cartel, new ArrayList<UUID>(), new ArrayList<UUID>());
 		
+		actualizarCartel();
+		
 		//TODO Guardar en mysql
+	}
+	
+	public void actualizarCartel() {
+		if(getOwner().isPresent()) {
+			Sign cartelState = (Sign) this.cartel.getBlock().getState();
+			cartelState.setLine(0, "Class: "+clase.id);
+			cartelState.setLine(1, "Number: "+this.numero);
+			cartelState.setLine(2, "SOLD");
+			cartelState.setLine(3, Bukkit.getPlayer(this.owner).getName());
+		} else {
+			Sign cartelState = (Sign) this.cartel.getBlock().getState();
+			cartelState.setLine(0, "Class: "+clase.id);
+			cartelState.setLine(1, "Number: "+this.numero);
+			cartelState.setLine(2, "");
+			cartelState.setLine(3, "$"+clase.precio);
+		}
+	}
+	
+	public static Optional<Casa> getCasaByCartel(Location loc) {
+		return casas.parallelStream().filter(casa -> casa.cartel.equals(loc)).findFirst();
 	}
 	
 	public static void cargarCasas() {
@@ -51,8 +76,8 @@ public class Casa {
 	public int getNumero() {
 		return numero;
 	}
-	public UUID getOwner() {
-		return owner;
+	public Optional<UUID> getOwner() {
+		return Optional.ofNullable(owner);
 	}
 	public Location getCartel() {
 		return cartel;
