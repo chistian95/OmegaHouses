@@ -1,7 +1,5 @@
 package es.elzoo.omega.gui;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -46,8 +44,26 @@ public abstract class GUI {
 		return;
 	}
 	
+	public void ponerMarcoGrande() {
+		for(int x=0; x<9; x++) {
+			for(int y=0; y<6; y++) {
+				int i = y*9+x;
+				
+				if(y == 0 || y == 5) {
+					if(x <= 1 || x >= 7 || (x >= 3 && x <= 5)) {
+						ponerItem(i, crearItem(Material.STAINED_GLASS_PANE, "", (short) 15));
+					}
+				} else if(y == 1 || y == 4) {
+					if(x == 0 || x == 8) {
+						ponerItem(i, crearItem(Material.STAINED_GLASS_PANE, "", (short) 15));
+					}
+				}
+			}
+		}
+	}
+	
 	public static ItemStack crearItem(Material material, String nombre, short data) {
-		ItemStack item = new ItemStack(material);
+		ItemStack item = new ItemStack(material, 1, data);
 		
 		ItemMeta meta = item.getItemMeta();
 		meta.setDisplayName(ChatColor.RESET + nombre);
@@ -62,22 +78,12 @@ public abstract class GUI {
 		return item;
 	}
 	
-	public static void enviarComandoBungee(Player player, String cmd) {
-		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-			try {
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				DataOutputStream out = new DataOutputStream(stream);
-				out.writeUTF(player.getName());
-				out.writeUTF(cmd);
-				player.sendPluginMessage(plugin, "elzoo:zoosurvival", stream.toByteArray());
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		});		
-	}
-	
 	public static ItemStack crearItem(Material material, String nombre) {
 		return crearItem(material, nombre, (short) 0);
+	}
+	
+	public static int getSlot(int y, int x) {
+		return y*9+x;
 	}
 	
 	public void ponerItem(int slot, ItemStack item, GUIAccion accion) {
