@@ -152,6 +152,11 @@ public class CasaAsistenteCrear {
 		}
 	}
 	
+	public void setClase(Clase clase) {
+		this.clase = clase;
+		next();
+	}
+	
 	private void particulasAsistente() {
 		World mundo = locIzq.getWorld();
 		Location loc = locIzq.clone();
