@@ -108,6 +108,10 @@ public class Casa {
 		return casas.parallelStream().filter(casa -> casa.cartel.equals(loc)).findFirst();
 	}
 	
+	public static Optional<Casa> getCasaByClaseYNumero(Clase clase, int numero) {
+		return casas.parallelStream().filter(casa -> casa.clase.equals(clase) && casa.numero == numero).findFirst();
+	}
+	
 	public static void cargarCasas() {
 		//TODO Cargar casas
 	}
