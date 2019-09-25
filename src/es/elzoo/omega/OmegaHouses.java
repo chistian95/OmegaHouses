@@ -6,6 +6,8 @@ import java.sql.DriverManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import es.elzoo.omega.comandos.ComandoHouse;
+
 public class OmegaHouses extends JavaPlugin {
 	static String url;
 	static String user;
@@ -38,10 +40,10 @@ public class OmegaHouses extends JavaPlugin {
 		}
 		
 		//Registrar eventos
-		//getServer().getPluginManager().registerEvents(new EventosClanes(), this);
+		getServer().getPluginManager().registerEvents(new EventosCasa(), this);
 		
 		//Registrar comandos
-		//getCommand("clan").setExecutor(new ComandoClan());
+		getCommand("house").setExecutor(new ComandoHouse());
 	}
 	
 	@Override
