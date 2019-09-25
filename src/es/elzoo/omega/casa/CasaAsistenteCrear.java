@@ -3,7 +3,6 @@ package es.elzoo.omega.casa;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
@@ -63,7 +62,6 @@ public class CasaAsistenteCrear {
 		if(paso != 3) {
 			return;
 		}
-		UUID owner = Bukkit.getPlayer(getNick()).getUniqueId();
 		
 		int xMin = (locIzq.getBlockX() < locDrc.getBlockX() ? locIzq.getBlockX() : locDrc.getBlockX());
 		int yMin = (locIzq.getBlockY() < locDrc.getBlockY() ? locIzq.getBlockY() : locDrc.getBlockY());
@@ -76,7 +74,7 @@ public class CasaAsistenteCrear {
 		Location pos1 = new Location(locIzq.getWorld(), xMin, yMin, zMin);
 		Location pos2 = new Location(locIzq.getWorld(), xMax, yMax, zMax);
 		
-		new Casa(clase, owner, pos1, pos2, cartel);
+		new Casa(clase, null, pos1, pos2, cartel);
 	}
 	
 	public void cancel() {

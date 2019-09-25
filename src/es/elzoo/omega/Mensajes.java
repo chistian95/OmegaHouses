@@ -12,7 +12,8 @@ public enum Mensajes {
 	HOUSE_CREATE_SIGN("&aClick on a sign to set the main door. &rNote: It must be above or to the side of an iron door."),
 	HOUSE_CREATE_NO_DOOR("&cCould not find a door. You must place the sign above or to the side of an iron door."),
 	HOUSE_CREATE_CANCEL("&7Assistant canceled."),
-	HOUSE_NO_ASSISTANT("&cYou do not have any assistant to cancel.");
+	HOUSE_NO_ASSISTANT("&cYou do not have any assistant to cancel."),
+	HOUSE_CANT_DESTROY_SIGN("&cYou can't destroy the sign of a house. First delete it with &r/house remove <class> <number>&c.");
 	
 	private String msg;
 	
