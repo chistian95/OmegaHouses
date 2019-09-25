@@ -40,6 +40,16 @@ public class Clase {
 	public static List<Clase> getClases() {
 		return clases;
 	}
+	
+	public int getId() {
+		return id;
+	}
+	public double getPrecio() {
+		return precio;
+	}
+	public int getCofres() {
+		return cofres;
+	}
 
 	@Override
 	public int hashCode() {

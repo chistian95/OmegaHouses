@@ -8,6 +8,11 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
+
+import es.elzoo.omega.casa.gui.GUICasaGuest;
+import es.elzoo.omega.casa.gui.GUICasaOwner;
+import es.elzoo.omega.casa.gui.GUICasaVacia;
 
 public class Casa {
 	private static List<Casa> casas;
@@ -56,6 +61,47 @@ public class Casa {
 			cartelState.setLine(2, "");
 			cartelState.setLine(3, "$"+clase.precio);
 		}
+	}
+	
+	public void onClickCartel(Player player) {
+		Optional<UUID> owner = getOwner();
+		if(!owner.isPresent()) {
+			GUICasaVacia gui = new GUICasaVacia(this);
+			gui.abrir(player);
+			return;
+		}
+		
+		if(isOwner(player)) {
+			GUICasaOwner gui = new GUICasaOwner(this);
+			gui.abrir(player);
+		} else {
+			GUICasaGuest gui = new GUICasaGuest(this);
+			gui.abrir(player);
+		}
+	}
+	
+	public void comprar(Player player) {
+		//TODO Comprar casa
+	}
+	
+	public void borrarGuest(UUID guest) {
+		//TODO Borrar guest
+	}
+	
+	public void borrarTrusted(UUID trusted) {
+		//TODO Borrar trusted
+	}
+	
+	public boolean isOwner(Player player) {
+		return owner != null && owner.equals(player.getUniqueId());
+	}
+	
+	public boolean isTrusted(Player player) {
+		return trusteds.parallelStream().anyMatch(tr -> tr.equals(player.getUniqueId()));
+	}
+	
+	public boolean isGuest(Player player) {
+		return guests.parallelStream().anyMatch(guest -> guest.equals(player.getUniqueId()));
 	}
 	
 	public static Optional<Casa> getCasaByCartel(Location loc) {

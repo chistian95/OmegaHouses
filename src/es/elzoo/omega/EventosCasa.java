@@ -2,6 +2,7 @@ package es.elzoo.omega;
 
 import java.util.Optional;
 
+import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -37,5 +38,24 @@ public class EventosCasa implements Listener {
 			event.setCancelled(true);
 			event.getPlayer().sendMessage(Mensajes.HOUSE_CANT_DESTROY_SIGN.toString());
 		}
+	}
+	
+	@EventHandler
+	public void onCartelInteract(PlayerInteractEvent event) {
+		if(!event.hasBlock()) {
+			return;
+		}
+		
+		if(!(event.getClickedBlock().getState() instanceof Sign)) {
+			return;
+		}
+		
+		Optional<Casa> casa = Casa.getCasaByCartel(event.getClickedBlock().getLocation());
+		if(!casa.isPresent()) {
+			return;
+		}
+		
+		event.setCancelled(true);
+		casa.get().onClickCartel(event.getPlayer());
 	}
 }
