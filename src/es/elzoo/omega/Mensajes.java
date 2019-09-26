@@ -17,7 +17,9 @@ public enum Mensajes {
 	HOUSE_BUY_HAS_OWNER("&cThis house is already sold."),
 	HOUSE_BUY_NO_MONEY("&cYou do not have enough money to buy this house. You need: &r$"),
 	HOUSE_SELL_NO_OWNER("&cYou are not the owner of this house."),
-	HOUSE_SELL_ERROR("&cAn error ocurred while selling the house. Try again or contact an admin.");
+	HOUSE_SELL_ERROR("&cAn error ocurred while selling the house. Try again or contact an admin."),
+	HOUSE_CREATED("&aHouse created."),
+	HOUSE_DELETED("&aHouse deleted.");
 	
 	private String msg;
 	

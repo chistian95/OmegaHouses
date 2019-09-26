@@ -34,7 +34,7 @@ public class Clase {
 	}
 	
 	public static void cargarClases() {
-		//TODO Cargar clases
+		//TODO Cargar clases mysql
 	}
 	
 	public static List<Clase> getClases() {
