@@ -1,8 +1,8 @@
 package es.elzoo.omega.casa.gui;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -15,40 +15,36 @@ import es.elzoo.omega.casa.Casa;
 import es.elzoo.omega.gui.GUI;
 import net.md_5.bungee.api.ChatColor;
 
-public class GUIVerGuests extends GUI {
+public class GUINuevoGuest extends GUI {
 	private static Plugin plugin = Bukkit.getPluginManager().getPlugin("OmegaHouses");
 	
 	private Casa casa;
-	private boolean isOwner;
+	private String accion;
 	
-	public GUIVerGuests(Casa casa, boolean isOwner) {
-		this(casa, isOwner, 1);
+	public GUINuevoGuest(Casa casa, String accion) {
+		this(casa, accion, 1);
 	}
-	
-	public GUIVerGuests(Casa casa, boolean isOwner, int pag) {
-		super(54, "Guests list");
+	public GUINuevoGuest(Casa casa, String accion, int pag) {
+		super(54, "Add a new "+accion);
 		
-		this.isOwner = isOwner;
 		this.casa = casa;
+		this.accion = accion;
 		
 		ponerMarcoGrande();
 		
-		List<UUID> guests = casa.getGuests();
+		List<UUID> guests = Bukkit.getOnlinePlayers()
+			.parallelStream()
+			.sorted((a,b) -> b.getName().compareTo(a.getName()))
+			.map(p -> p.getUniqueId())
+			.collect(Collectors.toList());
 		cargarCabezas(guests, pag);
 		
-		if(isOwner) {
-			ponerItem(GUI.getSlot(0, 4), GUI.crearItem(Material.FISHING_ROD, ChatColor.GREEN + "Add guest"), p -> {
-				GUINuevoGuest gui = new GUINuevoGuest(casa, "guest");
-				gui.abrir(p);
-			});
-		}
-		
 		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.REDSTONE, ChatColor.GRAY + "Go Back"), p -> {
-			if(isOwner) {
-				GUICasaOwner gui = new GUICasaOwner(casa);
+			if(accion.equalsIgnoreCase("guest")) {
+				GUIVerGuests gui = new GUIVerGuests(casa, true);
 				gui.abrir(p);
-			} else {
-				GUICasaGuest gui = new GUICasaGuest(casa);
+			} else if(accion.equalsIgnoreCase("trusted")) {
+				GUIVerTrusteds gui = new GUIVerTrusteds(casa, true);
 				gui.abrir(p);
 			}
 		});
@@ -57,7 +53,7 @@ public class GUIVerGuests extends GUI {
 			ItemStack flecha = GUI.crearItem(Material.ARROW, ChatColor.BOLD+"Previous Page");
 			flecha.setAmount(pag-1);
 			ponerItem(GUI.getSlot(5, 2), flecha, p -> {
-				GUIVerGuests gui = new GUIVerGuests(casa, isOwner, pag-1);
+				GUINuevoGuest gui = new GUINuevoGuest(casa, accion, pag-1);
 				gui.abrir(p);
 			});
 		}
@@ -66,7 +62,7 @@ public class GUIVerGuests extends GUI {
 			ItemStack flecha = GUI.crearItem(Material.ARROW, ChatColor.BOLD+"Next Page");
 			flecha.setAmount(pag+1);
 			ponerItem(GUI.getSlot(5, 6), flecha, p -> {
-				GUIVerGuests gui = new GUIVerGuests(casa, isOwner, pag+1);
+				GUINuevoGuest gui = new GUINuevoGuest(casa, accion, pag+1);
 				gui.abrir(p);
 			});
 		}
@@ -81,24 +77,19 @@ public class GUIVerGuests extends GUI {
 				
 				ItemStack cabeza = GUI.crearItem(Material.SKULL_ITEM, (player.isOnline() ? ChatColor.GREEN : ChatColor.RED)+""+player.getName());
 				SkullMeta cabezaMeta = (SkullMeta) cabeza.getItemMeta();
-				cabezaMeta.setOwner(player.getName());
-				
-				if(isOwner) {
-					cabezaMeta.setLore(Arrays.asList(new String[] {ChatColor.RED + "- Click to delete -"}));
-				}
-				
+				cabezaMeta.setOwner(player.getName());				
 				cabeza.setItemMeta(cabezaMeta);
 				
 				int fila = index/7 + 1;
 				int columna = index%7 + 1;
 				
 				ponerItem(GUI.getSlot(fila, columna), cabeza, p -> {
-					if(!isOwner) {
-						return;
-					}
-					
 					p.closeInventory();
-					casa.borrarGuest(player.getUniqueId(), p);
+					if(accion.equalsIgnoreCase("guest")) {
+						casa.addGuest(player.getUniqueId(), p);
+					} else if(accion.equalsIgnoreCase("trusted")) {
+						casa.addTrusted(player.getUniqueId(), p);
+					}
 				});
 			}
 		});
