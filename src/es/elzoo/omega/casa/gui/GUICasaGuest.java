@@ -12,7 +12,7 @@ import es.elzoo.omega.gui.GUI;
 
 public class GUICasaGuest extends GUI {
 	public GUICasaGuest(Casa casa) {
-super(54, Bukkit.getPlayer(casa.getOwner().get()).getName()+"'s house");
+		super(54, Bukkit.getPlayer(casa.getOwner().get()).getName()+"'s house");
 		
 		ponerMarcoGrande();
 		

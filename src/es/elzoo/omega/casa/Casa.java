@@ -132,10 +132,11 @@ public class Casa {
 	}
 	
 	public void borrarCartel() {
-		Sign cartelState = (Sign) this.cartel.getBlock().getState().getData();
+		Sign cartelState = (Sign) this.cartel.getBlock().getState();
 		for(int i=0; i<4; i++) {
 			cartelState.setLine(i, "");
 		}
+		cartelState.update();
 	}
 	
 	public void actualizarCartel() {

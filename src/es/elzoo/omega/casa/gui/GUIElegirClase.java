@@ -22,7 +22,7 @@ public class GUIElegirClase extends GUI {
 		
 		for(int i=0, len=clases.size(); i<24 && i<len; i++) {
 			final Clase clase = clases.get(i);
-			ItemStack itemClase = GUI.crearItem(Material.NAME_TAG, ChatColor.BLUE + "" + clase.getId());
+			ItemStack itemClase = GUI.crearItem(Material.NAME_TAG, ChatColor.BLUE + "Class: " + clase.getId());
 			ItemMeta itemMeta = itemClase.getItemMeta();
 			itemMeta.setLore(Arrays.asList(new String[] {
 				ChatColor.GRAY + "Chests: " + clase.getCofres(),
