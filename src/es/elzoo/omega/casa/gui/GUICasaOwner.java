@@ -38,5 +38,10 @@ public class GUICasaOwner extends GUI {
 			GUIVerTrusteds gui = new GUIVerTrusteds(casa, true);
 			gui.abrir(p);
 		});
+		
+		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.TNT, ChatColor.RED+"Click to sell the house"), p -> {
+			p.closeInventory();
+			casa.vender(p);
+		});
 	}
 }

@@ -13,7 +13,11 @@ public enum Mensajes {
 	HOUSE_CREATE_NO_DOOR("&cCould not find a door. You must place the sign above or to the side of an iron door."),
 	HOUSE_CREATE_CANCEL("&7Assistant canceled."),
 	HOUSE_NO_ASSISTANT("&cYou do not have any assistant to cancel."),
-	HOUSE_CANT_DESTROY_SIGN("&cYou can't destroy the sign of a house. First delete it with &r/house remove <class> <number>&c.");
+	HOUSE_CANT_DESTROY_SIGN("&cYou can't destroy the sign of a house. First delete it with &r/house remove <class> <number>&c."),
+	HOUSE_BUY_HAS_OWNER("&cThis house is already sold."),
+	HOUSE_BUY_NO_MONEY("&cYou do not have enough money to buy this house. You need: &r$"),
+	HOUSE_SELL_NO_OWNER("&cYou are not the owner of this house."),
+	HOUSE_SELL_ERROR("&cAn error ocurred while selling the house. Try again or contact an admin.");
 	
 	private String msg;
 	

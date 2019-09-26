@@ -3,7 +3,7 @@ main: es.elzoo.omega.OmegaHouses
 author: Chistian95
 website: https://elzoo.es
 version: 1.0.0
-depend: [WorldEdit, WorldGuard, Vault]
+depend: [Vault]
 commands:
   house:
     description: Main command for housing

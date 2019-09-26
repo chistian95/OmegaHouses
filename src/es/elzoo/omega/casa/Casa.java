@@ -7,12 +7,17 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 
+import es.elzoo.omega.Mensajes;
+import es.elzoo.omega.OmegaHouses;
 import es.elzoo.omega.casa.gui.GUICasaGuest;
 import es.elzoo.omega.casa.gui.GUICasaOwner;
 import es.elzoo.omega.casa.gui.GUICasaVacia;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 
 public class Casa {
 	private static List<Casa> casas;
@@ -81,7 +86,51 @@ public class Casa {
 	}
 	
 	public void comprar(Player player) {
-		//TODO Comprar casa
+		Economy economy = OmegaHouses.getEconomy();
+		
+		if(this.getOwner().isPresent()) {
+			player.sendMessage(Mensajes.HOUSE_BUY_HAS_OWNER.toString());
+			return;
+		}
+		
+		OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(player.getUniqueId());		
+		EconomyResponse res = economy.withdrawPlayer(offPlayer, this.getClase().getPrecio());
+		
+		if(!res.transactionSuccess()) {
+			player.sendMessage(Mensajes.HOUSE_BUY_NO_MONEY.toString()+this.getClase().getPrecio());
+			return;
+		}
+		
+		this.owner = player.getUniqueId();
+		this.guests.clear();
+		this.trusteds.clear();
+		actualizarCartel();
+		
+		//TODO Guardar compra
+	}
+	
+	public void vender(Player player) {
+		Economy economy = OmegaHouses.getEconomy();
+		
+		if(!this.getOwner().isPresent() || !this.isOwner(player)) {
+			player.sendMessage(Mensajes.HOUSE_SELL_NO_OWNER.toString());
+			return;
+		}
+		
+		OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
+		EconomyResponse res = economy.depositPlayer(offPlayer, this.getClase().getPrecio());
+		
+		if(!res.transactionSuccess()) {			
+			player.sendMessage(Mensajes.HOUSE_SELL_ERROR.toString());
+			return;
+		}
+		
+		this.owner = null;
+		this.guests.clear();
+		this.trusteds.clear();
+		actualizarCartel();
+		
+		//TODO Guardar venta
 	}
 	
 	public void borrarGuest(UUID guest) {
