@@ -19,7 +19,9 @@ public enum Mensajes {
 	HOUSE_SELL_NO_OWNER("&cYou are not the owner of this house."),
 	HOUSE_SELL_ERROR("&cAn error ocurred while selling the house. Try again or contact an admin."),
 	HOUSE_CREATED("&aHouse created."),
-	HOUSE_DELETED("&aHouse deleted.");
+	HOUSE_DELETED("&aHouse deleted."),
+	HOUSE_GUEST_REMOVED("&aGuest removed from house."),
+	HOUSE_TRUSTED_REMOVED("&aTrusted removef from house.");
 	
 	private String msg;
 	

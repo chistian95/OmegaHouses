@@ -91,7 +91,7 @@ public class GUIVerGuests extends GUI {
 					}
 					
 					p.closeInventory();
-					casa.borrarGuest(player.getUniqueId());
+					casa.borrarGuest(player.getUniqueId(), p);
 				});
 			}
 		});

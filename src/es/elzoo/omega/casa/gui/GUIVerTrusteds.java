@@ -91,7 +91,7 @@ public class GUIVerTrusteds extends GUI {
 					}
 					
 					p.closeInventory();
-					casa.borrarTrusted(player.getUniqueId());
+					casa.borrarTrusted(player.getUniqueId(), p);
 				});
 			}
 		});
