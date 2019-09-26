@@ -7,9 +7,12 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.material.Door;
 
 import es.elzoo.omega.Mensajes;
 import es.elzoo.omega.OmegaHouses;
@@ -98,6 +101,28 @@ public class Casa {
 		} else {
 			GUICasaGuest gui = new GUICasaGuest(this);
 			gui.abrir(player);
+		}
+	}
+	
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		if(event.getClickedBlock().getType().equals(Material.CHEST)) {
+			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer())) {
+				event.setCancelled(true);
+				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
+			}
+		} else if(event.getClickedBlock().getType().equals(Material.IRON_DOOR) || event.getClickedBlock().getType().equals(Material.IRON_DOOR_BLOCK)) {
+			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer()) && !this.isGuest(event.getPlayer())) {
+				event.setCancelled(true);
+				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
+			} else {
+				Door puerta = (Door) event.getClickedBlock().getState();
+				puerta.setOpen(!puerta.isOpen());
+			}
+		} else if(event.getClickedBlock().getState() instanceof Door) {
+			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer())) {
+				event.setCancelled(true);
+				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
+			}
 		}
 	}
 	
@@ -195,6 +220,17 @@ public class Casa {
 	
 	public static Optional<Casa> getCasaByClaseYNumero(Clase clase, int numero) {
 		return casas.parallelStream().filter(casa -> casa.clase.equals(clase) && casa.numero == numero).findFirst();
+	}
+	
+	public static Optional<Casa> getCasaByArea(Location loc) {
+		return casas.parallelStream().filter(casa -> {
+			if(loc.getBlockX() >= casa.pos1.getBlockX() && loc.getBlockY() >= casa.pos1.getBlockY() && loc.getBlockZ() >= casa.pos1.getBlockZ()) {
+				if(loc.getBlockX() <= casa.pos2.getBlockX() && loc.getBlockY() <= casa.pos2.getBlockY() && loc.getBlockZ() <= casa.pos2.getBlockZ()) {
+					return true;
+				}
+			}
+			return false;
+		}).findFirst();
 	}
 	
 	public static void cargarCasas() {
