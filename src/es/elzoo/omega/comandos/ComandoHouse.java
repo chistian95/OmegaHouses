@@ -20,6 +20,7 @@ import es.elzoo.omega.casa.CasaAsistenteCrear;
 import es.elzoo.omega.casa.Clase;
 import es.elzoo.omega.casa.gui.GUICasaGuest;
 import es.elzoo.omega.casa.gui.GUICasaOwner;
+import es.elzoo.omega.casa.gui.GUICasaVacia;
 
 public class ComandoHouse implements CommandExecutor, TabCompleter {
 	@Override
@@ -56,7 +57,7 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 		player.sendMessage(ChatColor.GRAY+"/house create - Starts the assistant to add a new house.");
 		player.sendMessage(ChatColor.GRAY+"/house delete <class> <number> - Deletes the house.");
 		player.sendMessage(ChatColor.GRAY+"/house cancel - Cancels the current assistant.");
-		player.sendMessage(ChatColor.GRAY+"/house createClass <id> <price> <chests> - Cancels the current assistant.");
+		player.sendMessage(ChatColor.GRAY+"/house createClass <id> <price> <chests> - Create a new class.");
 		player.sendMessage(ChatColor.GRAY+"/house info <class> <number> - Shows the info of the selected house.");
 		player.sendMessage(ChatColor.GRAY+"/house buy <class> <number> - Buy a house.");
 		player.sendMessage(ChatColor.GRAY+"/house sell <class> <number> - Sell a house.");
@@ -262,8 +263,11 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 		if(casa.get().isOwner(player)) {
 			GUICasaOwner gui = new GUICasaOwner(casa.get());
 			gui.abrir(player);
-		} else {
+		} else if(casa.get().getOwner().isPresent()){
 			GUICasaGuest gui = new GUICasaGuest(casa.get());
+			gui.abrir(player);
+		} else {
+			GUICasaVacia gui = new GUICasaVacia(casa.get());
 			gui.abrir(player);
 		}
 	}
