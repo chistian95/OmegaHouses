@@ -30,6 +30,8 @@ public class CasaAsistenteCrear {
 	private CasaAsistenteCrear(String nick) {
 		this.nick = nick;
 		this.paso = 0;		
+		
+		usuarios.add(this);
 	}
 	
 	public void next() {
@@ -62,6 +64,8 @@ public class CasaAsistenteCrear {
 		if(paso != 3) {
 			return;
 		}
+		
+		usuarios.remove(this);
 		
 		int xMin = (locIzq.getBlockX() < locDrc.getBlockX() ? locIzq.getBlockX() : locDrc.getBlockX());
 		int yMin = (locIzq.getBlockY() < locDrc.getBlockY() ? locIzq.getBlockY() : locDrc.getBlockY());
@@ -131,7 +135,7 @@ public class CasaAsistenteCrear {
 	}
 	
 	private void setCartel(Block block) {
-		if(!(block instanceof Sign)) {
+		if(!(block.getState().getData() instanceof Sign)) {
 			return;
 		}		
 		Sign cartel = (Sign) block.getState().getData();
@@ -139,7 +143,7 @@ public class CasaAsistenteCrear {
 		boolean hayPuerta = false;
 		BlockFace[] faces = new BlockFace[] {BlockFace.DOWN, BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH, BlockFace.NORTH};
 		for(int i=0,len=faces.length; i<len; i++) {
-			Block puerta = block.getRelative(cartel.getFacing()).getRelative(faces[i]);
+			Block puerta = block.getRelative(cartel.getFacing().getOppositeFace()).getRelative(faces[i]);
 			if(puerta.getType().equals(Material.IRON_DOOR) || puerta.getType().equals(Material.IRON_DOOR_BLOCK)) {
 				hayPuerta = true;
 				break;
@@ -164,9 +168,9 @@ public class CasaAsistenteCrear {
 		Location loc = locIzq.clone();
 		int salto = 1;
 		
-		if(locIzq.distanceSquared(locDrc) > 10000) {
+		if(locIzq.distanceSquared(locDrc) > 2500) {
 			salto = 5;
-		} else if(locIzq.distanceSquared(locDrc) > 2500) {
+		} else if(locIzq.distanceSquared(locDrc) > 400) {
 			salto = 2;
 		}
 		
@@ -178,25 +182,25 @@ public class CasaAsistenteCrear {
 		int yMax = (locIzq.getBlockY() > locDrc.getBlockY() ? locIzq.getBlockY() : locDrc.getBlockY());
 		int zMax = (locIzq.getBlockZ() > locDrc.getBlockZ() ? locIzq.getBlockZ() : locDrc.getBlockZ());
 		
-		for(int x=xMin; x<xMax; x+=salto) {
-			if(x >= xMax) {
+		for(int x=xMin; x<=xMax; x+=salto) {
+			if(x > xMax) {
 				x = xMax;
 			}
-			loc.setX(x);
+			loc.setX(x+0.5);
 			
-			for(int y=yMin; y<yMax; y+=salto) {
-				if(y >= yMax) {
+			for(int y=yMin; y<=yMax; y+=salto) {
+				if(y > yMax) {
 					y = yMax;
 				}
-				loc.setY(y);
+				loc.setY(y+0.5);
 				
-				for(int z=zMin; z<zMax; z+=salto) {
-					if(z >= zMax) {
+				for(int z=zMin; z<=zMax; z+=salto) {
+					if(z > zMax) {
 						z = zMax;
 					}
-					loc.setZ(z);
+					loc.setZ(z+0.5);
 					
-					mundo.playEffect(loc, Effect.COLOURED_DUST, Integer.MAX_VALUE);
+					mundo.playEffect(loc, Effect.LAVADRIP, 0);
 				}
 			}
 		}

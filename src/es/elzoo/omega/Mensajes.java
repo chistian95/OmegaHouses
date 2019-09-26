@@ -4,7 +4,7 @@ import org.bukkit.ChatColor;
 
 public enum Mensajes {
 	PLAYER_ONLY("&cThis command can only be used by a player."),
-	NO_PERMISOS("&cYou do not have permission to use this command."),
+	NO_PERMISOS("&cYou do not have permissions to do that."),
 	
 	HOUSE_CREATE_AREA("&aSelect a region for the house"),
 	HOUSE_CREATE_LEFT_POS("&aLeft position set. Use &r/house create &afor the next step when you are ready."),
@@ -20,10 +20,12 @@ public enum Mensajes {
 	HOUSE_SELL_ERROR("&cAn error ocurred while selling the house. Try again or contact an admin."),
 	HOUSE_CREATED("&aHouse created."),
 	HOUSE_DELETED("&aHouse deleted."),
-	HOUSE_GUEST_ADDED("&aGuest add to house."),
+	HOUSE_GUEST_ADDED("&aGuest added to house."),
 	HOUSE_GUEST_REMOVED("&aGuest removed from house."),
 	HOUSE_TRUSTED_ADDED("&aTrusted added to house."),
-	HOUSE_TRUSTED_REMOVED("&aTrusted removed from house.");
+	HOUSE_TRUSTED_REMOVED("&aTrusted removed from house."),
+	HOUSE_BOUGHT("&aHouse bought."),
+	HOUSE_SOLD("&aHouse sold.");
 	
 	private String msg;
 	

@@ -7,7 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import es.elzoo.omega.casa.CasaAsistenteCrear;
 import es.elzoo.omega.comandos.ComandoHouse;
+import es.elzoo.omega.gui.GUIEventos;
 import net.milkbowl.vault.economy.Economy;
 
 public class OmegaHouses extends JavaPlugin {
@@ -42,18 +44,26 @@ public class OmegaHouses extends JavaPlugin {
 			url = "jdbc:mysql://"+getConfig().getString("url")+":"+getConfig().getString("port")+"/"+getConfig().getString("database")+"?autoReconnect=true";
 			user = getConfig().getString("user");
 			pass = getConfig().getString("pass");
-			conexion = DriverManager.getConnection(url, user, pass);	
+			//TODO Descomentar esto
+			//conexion = DriverManager.getConnection(url, user, pass);	
 			crearTablas();
 		} catch(Exception e) {
 			e.printStackTrace();
-			Bukkit.getServer().shutdown();
+			//TODO Descomentar esto
+			//Bukkit.getServer().shutdown();
 		}
 		
 		//Registrar eventos
+		getServer().getPluginManager().registerEvents(new GUIEventos(), this);
 		getServer().getPluginManager().registerEvents(new EventosCasa(), this);
 		
 		//Registrar comandos
 		getCommand("house").setExecutor(new ComandoHouse());
+		
+		//Tarea asistente
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+			CasaAsistenteCrear.tickAsistente();
+		}, 20, 20); 
 	}
 	
 	@Override
@@ -72,10 +82,6 @@ public class OmegaHouses extends JavaPlugin {
 	}
 	
 	private boolean setupEconomy() {
-		if(Bukkit.getPluginManager().getPlugin("Vault") == null) {
-			return false;
-		}
-		
 		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
 		if(rsp == null) {
 			return false;

@@ -71,7 +71,7 @@ public class EventosCasa implements Listener {
 			return;
 		}
 		
-		if(!event.getClickedBlock().getType().equals(Material.CHEST) && !(event.getClickedBlock().getState() instanceof Door)) {
+		if(!event.getClickedBlock().getType().equals(Material.CHEST) && !(event.getClickedBlock().getState().getData() instanceof Door)) {
 			return;
 		}
 		
