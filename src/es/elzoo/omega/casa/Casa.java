@@ -149,12 +149,18 @@ public class Casa {
 		//TODO Guardar venta mysql
 	}
 	
-	public void borrarGuest(UUID guest) {
-		//TODO Borrar guest
+	public void borrarGuest(UUID guest, Player player) {
+		guests.remove(guest);
+		player.sendMessage(Mensajes.HOUSE_GUEST_REMOVED.toString());
+		
+		//TODO Borrar guest mysql
 	}
 	
-	public void borrarTrusted(UUID trusted) {
-		//TODO Borrar trusted
+	public void borrarTrusted(UUID trusted, Player player) {
+		trusteds.remove(trusted);
+		player.sendMessage(Mensajes.HOUSE_TRUSTED_REMOVED.toString());
+		
+		//TODO Borrar trusted mysql
 	}
 	
 	public boolean isOwner(Player player) {
