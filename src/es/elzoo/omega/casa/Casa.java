@@ -1,5 +1,7 @@
 package es.elzoo.omega.casa;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,9 +18,11 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.material.Door;
+import org.bukkit.plugin.Plugin;
 
 import es.elzoo.omega.Mensajes;
 import es.elzoo.omega.OmegaHouses;
+import es.elzoo.omega.Utils;
 import es.elzoo.omega.casa.gui.GUICasaGuest;
 import es.elzoo.omega.casa.gui.GUICasaOwner;
 import es.elzoo.omega.casa.gui.GUICasaVacia;
@@ -26,6 +30,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 public class Casa {
+	private static Plugin plugin = Bukkit.getPluginManager().getPlugin("OmegaHouses");
 	private static List<Casa> casas = new ArrayList<Casa>();
 	
 	private Clase clase;
@@ -55,7 +60,29 @@ public class Casa {
 		
 		actualizarCartel();
 		
-		//TODO Guardar en mysql
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			PreparedStatement stmtHouse = null;
+			
+			try {
+				stmtHouse = OmegaHouses.getConexion().prepareStatement("INSERT INTO oh_house(clase_id, numero, pos1, pos2, cartel) VALUES (?,?,?,?,?);");
+				stmtHouse.setInt(1, this.getClase().getId());
+				stmtHouse.setInt(2, this.getNumero());
+				stmtHouse.setString(3, Utils.locationToString(this.pos1));
+				stmtHouse.setString(4, Utils.locationToString(this.pos2));
+				stmtHouse.setString(5, Utils.locationToString(this.cartel));
+				stmtHouse.execute();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmtHouse != null) {
+						stmtHouse.close();
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void borrar(Player player) {
@@ -64,7 +91,44 @@ public class Casa {
 		
 		player.sendMessage(Mensajes.HOUSE_DELETED.toString());
 		
-		//TODO Borrar casa en mysql
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			PreparedStatement stmtHouse = null;
+			PreparedStatement stmtTrusted = null;
+			PreparedStatement stmtGuest = null;
+			
+			try {
+				stmtHouse = OmegaHouses.getConexion().prepareStatement("DELETE FROM oh_house WHERE clase_id=? AND numero=?;");
+				stmtHouse.setInt(1, this.getClase().getId());
+				stmtHouse.setInt(2, this.getNumero());
+				stmtHouse.execute();
+				
+				stmtTrusted = OmegaHouses.getConexion().prepareStatement("DELETE FROM oh_trusted WHERE clase_id=? AND numero=?;");
+				stmtTrusted.setInt(1, this.getClase().getId());
+				stmtTrusted.setInt(2, this.getNumero());
+				stmtTrusted.execute();
+				
+				stmtGuest = OmegaHouses.getConexion().prepareStatement("DELETE FROM oh_guest WHERE clase_id=? AND numero=?;");
+				stmtGuest.setInt(1, this.getClase().getId());
+				stmtGuest.setInt(2, this.getNumero());
+				stmtGuest.execute();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmtHouse != null) {
+						stmtHouse.close();
+					}
+					if(stmtTrusted != null) {
+						stmtTrusted.close();
+					}
+					if(stmtGuest != null) {
+						stmtGuest.close();
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void borrarCartel() {
@@ -158,13 +222,31 @@ public class Casa {
 		}
 		
 		this.owner = player.getUniqueId();
-		this.guests.clear();
-		this.trusteds.clear();
 		actualizarCartel();
 		
 		player.sendMessage(Mensajes.HOUSE_BOUGHT.toString());
 		
-		//TODO Guardar compra mysql
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			PreparedStatement stmtHouse = null;
+			
+			try {
+				stmtHouse = OmegaHouses.getConexion().prepareStatement("UPDATE oh_house SET owner=? WHERE clase_id=? AND numero=?;");
+				stmtHouse.setString(1, this.owner.toString());
+				stmtHouse.setInt(2, this.getClase().getId());
+				stmtHouse.setInt(3, this.getNumero());
+				stmtHouse.execute();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmtHouse != null) {
+						stmtHouse.close();
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void vender(Player player) {
@@ -190,35 +272,153 @@ public class Casa {
 		
 		player.sendMessage(Mensajes.HOUSE_SOLD.toString());
 		
-		//TODO Guardar venta mysql
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			PreparedStatement stmtHouse = null;
+			PreparedStatement stmtTrusted = null;
+			PreparedStatement stmtGuest = null;
+			
+			try {
+				stmtHouse = OmegaHouses.getConexion().prepareStatement("UPDATE oh_house SET owner=? WHERE clase_id=? AND numero=?;");
+				stmtHouse.setString(1, null);
+				stmtHouse.setInt(2, this.getClase().getId());
+				stmtHouse.setInt(3, this.getNumero());
+				stmtHouse.execute();
+				
+				stmtTrusted = OmegaHouses.getConexion().prepareStatement("DELETE FROM oh_trusted WHERE clase_id=? AND numero=?;");
+				stmtTrusted.setInt(1, this.getClase().getId());
+				stmtTrusted.setInt(2, this.getNumero());
+				stmtTrusted.execute();
+				
+				stmtGuest = OmegaHouses.getConexion().prepareStatement("DELETE FROM oh_guest WHERE clase_id=? AND numero=?;");
+				stmtGuest.setInt(1, this.getClase().getId());
+				stmtGuest.setInt(2, this.getNumero());
+				stmtGuest.execute();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmtHouse != null) {
+						stmtHouse.close();
+					}
+					if(stmtTrusted != null) {
+						stmtTrusted.close();
+					}
+					if(stmtGuest != null) {
+						stmtGuest.close();
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void addGuest(UUID guest, Player player) {
 		guests.add(guest);
 		player.sendMessage(Mensajes.HOUSE_GUEST_ADDED.toString());
 		
-		//TODO Añadir guest mysql
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			PreparedStatement stmt = null;
+			
+			try {
+				stmt = OmegaHouses.getConexion().prepareStatement("INSERT INTO oh_guest (clase_id,numero,user) VALUES (?,?,?);");
+				stmt.setInt(1, this.getClase().getId());
+				stmt.setInt(2, this.getNumero());
+				stmt.setString(3, guest.toString());
+				stmt.execute();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmt != null) {
+						stmt.close();
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void addTrusted(UUID trusted, Player player) {
 		trusteds.add(trusted);
 		player.sendMessage(Mensajes.HOUSE_TRUSTED_ADDED.toString());
 		
-		//TODO Añadir trusted mysql
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			PreparedStatement stmt = null;
+			
+			try {
+				stmt = OmegaHouses.getConexion().prepareStatement("INSERT INTO oh_trusted (clase_id,numero,user) VALUES (?,?,?);");
+				stmt.setInt(1, this.getClase().getId());
+				stmt.setInt(2, this.getNumero());
+				stmt.setString(3, trusted.toString());
+				stmt.execute();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmt != null) {
+						stmt.close();
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void borrarGuest(UUID guest, Player player) {
 		guests.remove(guest);
 		player.sendMessage(Mensajes.HOUSE_GUEST_REMOVED.toString());
 		
-		//TODO Borrar guest mysql
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			PreparedStatement stmt = null;
+			
+			try {
+				stmt = OmegaHouses.getConexion().prepareStatement("DELETE FROM oh_guest WHERE clase_id=? AND numero=? AND user=?;");
+				stmt.setInt(1, this.getClase().getId());
+				stmt.setInt(2, this.getNumero());
+				stmt.setString(3, guest.toString());
+				stmt.execute();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmt != null) {
+						stmt.close();
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public void borrarTrusted(UUID trusted, Player player) {
 		trusteds.remove(trusted);
 		player.sendMessage(Mensajes.HOUSE_TRUSTED_REMOVED.toString());
 		
-		//TODO Borrar trusted mysql
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			PreparedStatement stmt = null;
+			
+			try {
+				stmt = OmegaHouses.getConexion().prepareStatement("DELETE FROM oh_trusted WHERE clase_id=? AND numero=? AND user=?;");
+				stmt.setInt(1, this.getClase().getId());
+				stmt.setInt(2, this.getNumero());
+				stmt.setString(3, trusted.toString());
+				stmt.execute();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmt != null) {
+						stmt.close();
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 	
 	public boolean isOwner(Player player) {
@@ -257,8 +457,69 @@ public class Casa {
 		}).findFirst();
 	}
 	
-	public static void cargarCasas() {
-		//TODO Cargar casas mysql
+	public static void cargarCasas() throws Exception {		
+		PreparedStatement stmtClass = OmegaHouses.getConexion().prepareStatement("SELECT id,precio,cofres FROM oh_class ORDER BY id;");
+		ResultSet resClass = stmtClass.executeQuery();
+		while(resClass.next()) {
+			int id = resClass.getInt(1);
+			double precio = resClass.getDouble(2);
+			int cofres = resClass.getInt(3);
+			
+			new Clase(id, precio, cofres);
+		}
+		stmtClass.close();
+		
+		PreparedStatement stmtHouse = OmegaHouses.getConexion().prepareStatement("SELECT clase_id, numero, owner, pos1, pos2, cartel FROM oh_house;");
+		ResultSet resHouse = stmtHouse.executeQuery();
+		while(resHouse.next()) {
+			Optional<Clase> clase = Clase.getClaseById(resHouse.getInt(1));
+			if(!clase.isPresent()) {
+				continue;
+			}
+			int numero = resHouse.getInt(2);
+			String ownerRaw = resHouse.getString(3);
+			UUID owner = null;
+			if(ownerRaw != null) {
+				owner = UUID.fromString(ownerRaw);
+			}
+			Location pos1 = Utils.parseLocation(resHouse.getString(4));
+			Location pos2 = Utils.parseLocation(resHouse.getString(5));
+			Location cartel = Utils.parseLocation(resHouse.getString(6));
+			new Casa(clase.get(), numero, owner, pos1, pos2, cartel, new ArrayList<UUID>(), new ArrayList<UUID>());
+		}
+		stmtHouse.close();
+		
+		PreparedStatement stmtGuest = OmegaHouses.getConexion().prepareStatement("SELECT clase_id, numero, user FROM oh_guest;");
+		ResultSet resGuest = stmtGuest.executeQuery();
+		while(resGuest.next()) {
+			Optional<Clase> clase = Clase.getClaseById(resGuest.getInt(1));
+			if(!clase.isPresent()) {
+				continue;
+			}
+			int numero = resGuest.getInt(2);
+			Optional<Casa> casa = Casa.getCasaByClaseYNumero(clase.get(), numero);
+			if(!casa.isPresent()) {
+				continue;
+			}
+			casa.get().guests.add(UUID.fromString(resGuest.getString(3)));
+		}
+		stmtGuest.close();
+		
+		PreparedStatement stmtTrusted = OmegaHouses.getConexion().prepareStatement("SELECT clase_id, numero, user FROM oh_trusted;");
+		ResultSet resTrusted = stmtTrusted.executeQuery();
+		while(resTrusted.next()) {
+			Optional<Clase> clase = Clase.getClaseById(resTrusted.getInt(1));
+			if(!clase.isPresent()) {
+				continue;
+			}
+			int numero = resTrusted.getInt(2);
+			Optional<Casa> casa = Casa.getCasaByClaseYNumero(clase.get(), numero);
+			if(!casa.isPresent()) {
+				continue;
+			}
+			casa.get().trusteds.add(UUID.fromString(resTrusted.getString(3)));
+		}
+		stmtTrusted.close();
 	}
 	
 	public static List<Casa> getCasas() {

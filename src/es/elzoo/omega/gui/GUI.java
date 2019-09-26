@@ -14,12 +14,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 
 import net.md_5.bungee.api.ChatColor;
 
 public abstract class GUI {
-	static Plugin plugin = Bukkit.getPluginManager().getPlugin("ZooSurvival");
 	public static Map<String, GUI> inventariosAbiertos = new HashMap<>();
 	
 	private UUID uuid;
