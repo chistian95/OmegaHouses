@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="D:/Dev/Librerias/spigot-api-1.8.8-R0.1-SNAPSHOT-shaded.jar"/>
 	<classpathentry kind="lib" path="D:/Dev/Librerias/Vault.jar"/>
+	<classpathentry kind="lib" path="D:/Dev/Librerias/mysql-connector-java-5.0.8-bin.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

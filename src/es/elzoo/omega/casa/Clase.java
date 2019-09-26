@@ -1,24 +1,60 @@
 package es.elzoo.omega.casa;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
+import org.bukkit.plugin.Plugin;
+
+import es.elzoo.omega.OmegaHouses;
+
 public class Clase {
+	private static Plugin plugin = Bukkit.getPluginManager().getPlugin("OmegaHouses");
 	private static List<Clase> clases = new ArrayList<Clase>();
 	
 	int id;
 	double precio;
 	int cofres;
 	
-	public Clase(int tipo, double precio, int cofres) {
+	public Clase(int tipo, double precio, int cofre) {
+		this(tipo,precio,cofre,false);
+	}
+	
+	public Clase(int tipo, double precio, int cofres, boolean mysql) {
 		super();
 		this.id = tipo;
 		this.precio = precio;
 		this.cofres = cofres;
 		
 		clases.add(this);
+		clases.sort((a,b) -> b.id-a.id);
+		
+		if(mysql) {
+			Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+				PreparedStatement stmtClase = null;
+				
+				try {
+					stmtClase = OmegaHouses.getConexion().prepareStatement("INSERT INTO oh_class (id,precio,cofres) VALUES (?,?,?);");
+					stmtClase.setInt(1, this.id);
+					stmtClase.setDouble(2, this.precio);
+					stmtClase.setInt(3, this.cofres);
+					stmtClase.execute();
+				} catch(Exception e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						if(stmtClase != null) {
+							stmtClase.close();
+						}
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
+				}
+			});
+		}
 	}
 	
 	public int getNextNumero() {
@@ -31,10 +67,6 @@ public class Clase {
 	
 	public static Optional<Clase> getClaseById(int id) {
 		return clases.parallelStream().filter(cl -> cl.id == id).findFirst();
-	}
-	
-	public static void cargarClases() {
-		//TODO Cargar clases mysql
 	}
 	
 	public static List<Clase> getClases() {

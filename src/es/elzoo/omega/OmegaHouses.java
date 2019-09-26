@@ -2,11 +2,13 @@ package es.elzoo.omega;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import es.elzoo.omega.casa.Casa;
 import es.elzoo.omega.casa.CasaAsistenteCrear;
 import es.elzoo.omega.comandos.ComandoHouse;
 import es.elzoo.omega.gui.GUIEventos;
@@ -43,14 +45,16 @@ public class OmegaHouses extends JavaPlugin {
 			
 			url = "jdbc:mysql://"+getConfig().getString("url")+":"+getConfig().getString("port")+"/"+getConfig().getString("database")+"?autoReconnect=true";
 			user = getConfig().getString("user");
-			pass = getConfig().getString("pass");
-			//TODO Descomentar esto
-			//conexion = DriverManager.getConnection(url, user, pass);	
+			pass = getConfig().getString("pass");			
+			conexion = DriverManager.getConnection(url, user, pass);	
+			
 			crearTablas();
+			
+			Casa.cargarCasas();
 		} catch(Exception e) {
 			e.printStackTrace();
-			//TODO Descomentar esto
-			//Bukkit.getServer().shutdown();
+			Bukkit.getLogger().severe("Error connecting to MySQL. Shutting down...");
+			Bukkit.getServer().shutdown();
 		}
 		
 		//Registrar eventos
@@ -59,6 +63,7 @@ public class OmegaHouses extends JavaPlugin {
 		
 		//Registrar comandos
 		getCommand("house").setExecutor(new ComandoHouse());
+		getCommand("house").setTabCompleter(new ComandoHouse());
 		
 		//Tarea asistente
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
@@ -105,8 +110,18 @@ public class OmegaHouses extends JavaPlugin {
 		}
 	}
 	
-	private void crearTablas() throws Exception {
-		//TODO Crear tablas mysql
+	private void crearTablas() throws Exception {		
+		PreparedStatement[] stmts = {
+			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_house(clase_id int, numero int, owner text, pos1 text, pos2 text, cartel text, UNIQUE(clase_id, numero));"),
+			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_guest(clase_id int, numero int, user text);"),
+			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_trusted(clase_id int, numero int, user text);"),
+			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_class(id int, precio double, cofres int);")
+		};
+		
+		for(int i=0,len=stmts.length; i<len; i++) {
+			stmts[i].execute();
+			stmts[i].close();
+		}
 	}
 	
 	public static Connection getConexion() {

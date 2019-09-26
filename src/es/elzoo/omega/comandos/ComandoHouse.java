@@ -1,11 +1,16 @@
 package es.elzoo.omega.comandos;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import es.elzoo.omega.Mensajes;
@@ -16,7 +21,7 @@ import es.elzoo.omega.casa.Clase;
 import es.elzoo.omega.casa.gui.GUICasaGuest;
 import es.elzoo.omega.casa.gui.GUICasaOwner;
 
-public class ComandoHouse implements CommandExecutor {
+public class ComandoHouse implements CommandExecutor, TabCompleter {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(!(sender instanceof Player)) {
@@ -57,6 +62,42 @@ public class ComandoHouse implements CommandExecutor {
 		player.sendMessage(ChatColor.GRAY+"/house sell <class> <number> - Sell a house.");
 	}
 	
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
+		System.out.println("Tab complete");
+		System.out.println(args.length+"");
+		if(args.length == 1) {
+			return Arrays.asList(new String[] {"create", "delete", "cancel", "createClass", "info", "buy", "sell"});
+		} else {
+			if(args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("info") || args[0].equalsIgnoreCase("buy") || args[0].equalsIgnoreCase("sell")) {
+				if(args.length == 2) {
+					return Clase.getClases().parallelStream().map(cl -> cl.getId()+"").collect(Collectors.toList());
+				} else if(args.length == 3) {
+					int claseId = 0;
+					try {
+						claseId = Integer.parseInt(args[1]);
+					} catch(Exception e) {
+						claseId = 0;
+					}
+					final int claseIdF = claseId;
+					
+					System.out.println("Claseid: "+claseIdF);
+					
+					if(claseId > 0) {
+						return Casa.getCasas()
+							.parallelStream()
+							.filter(casa -> casa.getClase().getId() == claseIdF)
+							.sorted((a,b) -> b.getNumero()-a.getNumero())
+							.map(casa -> casa.getNumero()+"")
+							.collect(Collectors.toList());
+					}					
+				}
+			} 
+		}
+		
+		return new ArrayList<String>();
+	}
+	
 	private static void crearCasa(Player player, String[] args) {
 		if(!player.hasPermission(Permisos.CASA_CREAR.toString())) {
 			player.sendMessage(Mensajes.NO_PERMISOS.toString());
@@ -91,7 +132,7 @@ public class ComandoHouse implements CommandExecutor {
 		
 		int houseNumber = 0;
 		try {
-			houseNumber = Integer.parseInt(args[3]);
+			houseNumber = Integer.parseInt(args[2]);
 		} catch(Exception e) {
 			houseNumber = 0;			
 		}
@@ -174,10 +215,8 @@ public class ComandoHouse implements CommandExecutor {
 			return;
 		}
 		
-		new Clase(id, price, chests);
+		new Clase(id, price, chests, true);
 		player.sendMessage(ChatColor.GREEN + "Class created.");
-		
-		//TODO Guardar clase mysql
 	}	
 	
 	private static void info(Player player, String[] args) {
