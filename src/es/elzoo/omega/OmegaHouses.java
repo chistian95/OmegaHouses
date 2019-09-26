@@ -4,15 +4,19 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import es.elzoo.omega.comandos.ComandoHouse;
+import net.milkbowl.vault.economy.Economy;
 
 public class OmegaHouses extends JavaPlugin {
 	static String url;
 	static String user;
 	static String pass;
 	private static Connection conexion;
+	
+	private static Economy economy;
 	
 	@Override
 	public void onEnable() {
@@ -24,6 +28,12 @@ public class OmegaHouses extends JavaPlugin {
 		getConfig().addDefault("pass", "password");
 		getConfig().options().copyDefaults(true);
 		saveConfig();
+		
+		if(!setupEconomy()) {
+			this.getLogger().severe("Vault plugin not found. Shutting down...");
+			Bukkit.getServer().shutdown();
+			return;
+		}
 		
 		//Conexión a MySQL
 		try {
@@ -61,6 +71,24 @@ public class OmegaHouses extends JavaPlugin {
 		}
 	}
 	
+	private boolean setupEconomy() {
+		if(Bukkit.getPluginManager().getPlugin("Vault") == null) {
+			return false;
+		}
+		
+		RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+		if(rsp == null) {
+			return false;
+		}
+		
+		economy = rsp.getProvider();
+		return economy != null;
+	}
+	
+	public static Economy getEconomy() {
+		return economy;
+	}
+	
 	public static void checkConexion() {
 		try {
 			if(conexion == null || conexion.isClosed() || !conexion.isValid(0)) {
@@ -72,7 +100,7 @@ public class OmegaHouses extends JavaPlugin {
 	}
 	
 	private void crearTablas() throws Exception {
-		
+		//TODO Crear tablas
 	}
 	
 	public static Connection getConexion() {
