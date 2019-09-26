@@ -176,6 +176,8 @@ public class ComandoHouse implements CommandExecutor {
 		
 		new Clase(id, price, chests);
 		player.sendMessage(ChatColor.GREEN + "Class created.");
+		
+		//TODO Guardar clase mysql
 	}	
 	
 	private static void info(Player player, String[] args) {
