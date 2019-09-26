@@ -199,7 +199,7 @@ public class ComandoHouse implements CommandExecutor {
 		
 		int houseNumber = 0;
 		try {
-			houseNumber = Integer.parseInt(args[3]);
+			houseNumber = Integer.parseInt(args[2]);
 		} catch(Exception e) {
 			houseNumber = 0;			
 		}
@@ -248,7 +248,7 @@ public class ComandoHouse implements CommandExecutor {
 		
 		int houseNumber = 0;
 		try {
-			houseNumber = Integer.parseInt(args[3]);
+			houseNumber = Integer.parseInt(args[2]);
 		} catch(Exception e) {
 			houseNumber = 0;			
 		}
@@ -291,7 +291,7 @@ public class ComandoHouse implements CommandExecutor {
 		
 		int houseNumber = 0;
 		try {
-			houseNumber = Integer.parseInt(args[3]);
+			houseNumber = Integer.parseInt(args[2]);
 		} catch(Exception e) {
 			houseNumber = 0;			
 		}

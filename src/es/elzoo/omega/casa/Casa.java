@@ -6,9 +6,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -23,7 +26,7 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
 public class Casa {
-	private static List<Casa> casas;
+	private static List<Casa> casas = new ArrayList<Casa>();
 	
 	private Clase clase;
 	private int numero;
@@ -65,7 +68,7 @@ public class Casa {
 	}
 	
 	public void borrarCartel() {
-		Sign cartelState = (Sign) this.cartel.getBlock().getState();
+		Sign cartelState = (Sign) this.cartel.getBlock().getState().getData();
 		for(int i=0; i<4; i++) {
 			cartelState.setLine(i, "");
 		}
@@ -74,16 +77,18 @@ public class Casa {
 	public void actualizarCartel() {
 		if(getOwner().isPresent()) {
 			Sign cartelState = (Sign) this.cartel.getBlock().getState();
-			cartelState.setLine(0, "Class: "+clase.id);
-			cartelState.setLine(1, "Number: "+this.numero);
-			cartelState.setLine(2, "SOLD");
+			cartelState.setLine(0, ChatColor.BLUE+"Class: "+ChatColor.RESET+clase.id);
+			cartelState.setLine(1, ChatColor.BOLD+"Number: "+ChatColor.RESET+this.numero);
+			cartelState.setLine(2, ChatColor.GRAY+""+ChatColor.STRIKETHROUGH+"SOLD");
 			cartelState.setLine(3, Bukkit.getPlayer(this.owner).getName());
+			cartelState.update();
 		} else {
 			Sign cartelState = (Sign) this.cartel.getBlock().getState();
-			cartelState.setLine(0, "Class: "+clase.id);
-			cartelState.setLine(1, "Number: "+this.numero);
+			cartelState.setLine(0, ChatColor.BLUE+"Class: "+ChatColor.RESET+clase.id);
+			cartelState.setLine(1, ChatColor.BOLD+"Number: "+ChatColor.RESET+this.numero);
 			cartelState.setLine(2, "");
-			cartelState.setLine(3, "$"+clase.precio);
+			cartelState.setLine(3, ChatColor.GOLD+"$"+clase.precio);
+			cartelState.update();
 		}
 	}
 	
@@ -115,10 +120,20 @@ public class Casa {
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
 			} else {
-				Door puerta = (Door) event.getClickedBlock().getState();
+				event.setCancelled(true);
+				BlockState doorState = event.getClickedBlock().getState();					
+				Door puerta = (Door) doorState.getData();
+				
+				if(puerta.isTopHalf()) {
+					doorState = event.getClickedBlock().getRelative(BlockFace.DOWN).getState();
+					puerta = (Door) doorState.getData();
+				}
+				
 				puerta.setOpen(!puerta.isOpen());
+				doorState.setData(puerta);
+				doorState.update();
 			}
-		} else if(event.getClickedBlock().getState() instanceof Door) {
+		} else if(event.getClickedBlock().getState().getData() instanceof Door) {
 			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer())) {
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
@@ -147,6 +162,8 @@ public class Casa {
 		this.trusteds.clear();
 		actualizarCartel();
 		
+		player.sendMessage(Mensajes.HOUSE_BOUGHT.toString());
+		
 		//TODO Guardar compra mysql
 	}
 	
@@ -170,6 +187,8 @@ public class Casa {
 		this.guests.clear();
 		this.trusteds.clear();
 		actualizarCartel();
+		
+		player.sendMessage(Mensajes.HOUSE_SOLD.toString());
 		
 		//TODO Guardar venta mysql
 	}
@@ -224,11 +243,16 @@ public class Casa {
 	
 	public static Optional<Casa> getCasaByArea(Location loc) {
 		return casas.parallelStream().filter(casa -> {
+			if(!loc.getWorld().equals(casa.pos1.getWorld())) {
+				return false;
+			}
+			
 			if(loc.getBlockX() >= casa.pos1.getBlockX() && loc.getBlockY() >= casa.pos1.getBlockY() && loc.getBlockZ() >= casa.pos1.getBlockZ()) {
 				if(loc.getBlockX() <= casa.pos2.getBlockX() && loc.getBlockY() <= casa.pos2.getBlockY() && loc.getBlockZ() <= casa.pos2.getBlockZ()) {
 					return true;
 				}
 			}
+			
 			return false;
 		}).findFirst();
 	}

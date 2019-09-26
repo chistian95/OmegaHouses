@@ -79,7 +79,7 @@ public class GUIVerGuests extends GUI {
 			for(int i=pag*24, len=guests.size(), index=0; i<len && i<pag*24+24; i++, index++) {
 				final Player player = Bukkit.getPlayer(guests.get(i));
 				
-				ItemStack cabeza = GUI.crearItem(Material.SKULL_ITEM, (player.isOnline() ? ChatColor.GREEN : ChatColor.RED)+""+player.getName());
+				ItemStack cabeza = GUI.crearItem(Material.SKULL_ITEM, (player.isOnline() ? ChatColor.GREEN : ChatColor.RED)+""+player.getName(), (short) 3);
 				SkullMeta cabezaMeta = (SkullMeta) cabeza.getItemMeta();
 				cabezaMeta.setOwner(player.getName());
 				
