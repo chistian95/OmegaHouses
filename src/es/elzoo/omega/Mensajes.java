@@ -20,8 +20,10 @@ public enum Mensajes {
 	HOUSE_SELL_ERROR("&cAn error ocurred while selling the house. Try again or contact an admin."),
 	HOUSE_CREATED("&aHouse created."),
 	HOUSE_DELETED("&aHouse deleted."),
+	HOUSE_GUEST_ADDED("&aGuest add to house."),
 	HOUSE_GUEST_REMOVED("&aGuest removed from house."),
-	HOUSE_TRUSTED_REMOVED("&aTrusted removef from house.");
+	HOUSE_TRUSTED_ADDED("&aTrusted added to house."),
+	HOUSE_TRUSTED_REMOVED("&aTrusted removed from house.");
 	
 	private String msg;
 	

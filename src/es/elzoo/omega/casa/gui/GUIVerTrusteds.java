@@ -36,6 +36,13 @@ public class GUIVerTrusteds extends GUI {
 		List<UUID> guests = casa.getTrusteds();
 		cargarCabezas(guests, pag);
 		
+		if(isOwner) {
+			ponerItem(GUI.getSlot(0, 4), GUI.crearItem(Material.FISHING_ROD, ChatColor.GREEN + "Add trusted"), p -> {
+				GUINuevoGuest gui = new GUINuevoGuest(casa, "trusted");
+				gui.abrir(p);
+			});
+		}
+		
 		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.REDSTONE, ChatColor.GRAY + "Go Back"), p -> {
 			if(isOwner) {
 				GUICasaOwner gui = new GUICasaOwner(casa);

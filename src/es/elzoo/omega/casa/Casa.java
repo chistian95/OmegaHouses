@@ -149,6 +149,20 @@ public class Casa {
 		//TODO Guardar venta mysql
 	}
 	
+	public void addGuest(UUID guest, Player player) {
+		guests.add(guest);
+		player.sendMessage(Mensajes.HOUSE_GUEST_ADDED.toString());
+		
+		//TODO Añadir guest mysql
+	}
+	
+	public void addTrusted(UUID trusted, Player player) {
+		trusteds.add(trusted);
+		player.sendMessage(Mensajes.HOUSE_TRUSTED_ADDED.toString());
+		
+		//TODO Añadir trusted mysql
+	}
+	
 	public void borrarGuest(UUID guest, Player player) {
 		guests.remove(guest);
 		player.sendMessage(Mensajes.HOUSE_GUEST_REMOVED.toString());
