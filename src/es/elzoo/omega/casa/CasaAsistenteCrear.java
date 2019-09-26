@@ -75,6 +75,8 @@ public class CasaAsistenteCrear {
 		Location pos2 = new Location(locIzq.getWorld(), xMax, yMax, zMax);
 		
 		new Casa(clase, null, pos1, pos2, cartel);
+		
+		Bukkit.getPlayer(nick).sendMessage(Mensajes.HOUSE_CREATED.toString());
 	}
 	
 	public void cancel() {

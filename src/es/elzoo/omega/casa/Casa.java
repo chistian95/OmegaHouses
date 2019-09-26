@@ -52,6 +52,22 @@ public class Casa {
 		//TODO Guardar en mysql
 	}
 	
+	public void borrar(Player player) {
+		casas.remove(this);
+		borrarCartel();
+		
+		player.sendMessage(Mensajes.HOUSE_DELETED.toString());
+		
+		//TODO Borrar casa en mysql
+	}
+	
+	public void borrarCartel() {
+		Sign cartelState = (Sign) this.cartel.getBlock().getState();
+		for(int i=0; i<4; i++) {
+			cartelState.setLine(i, "");
+		}
+	}
+	
 	public void actualizarCartel() {
 		if(getOwner().isPresent()) {
 			Sign cartelState = (Sign) this.cartel.getBlock().getState();
@@ -106,7 +122,7 @@ public class Casa {
 		this.trusteds.clear();
 		actualizarCartel();
 		
-		//TODO Guardar compra
+		//TODO Guardar compra mysql
 	}
 	
 	public void vender(Player player) {
@@ -130,7 +146,7 @@ public class Casa {
 		this.trusteds.clear();
 		actualizarCartel();
 		
-		//TODO Guardar venta
+		//TODO Guardar venta mysql
 	}
 	
 	public void borrarGuest(UUID guest) {
@@ -162,7 +178,7 @@ public class Casa {
 	}
 	
 	public static void cargarCasas() {
-		//TODO Cargar casas
+		//TODO Cargar casas mysql
 	}
 	
 	public static List<Casa> getCasas() {

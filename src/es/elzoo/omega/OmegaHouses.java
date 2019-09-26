@@ -100,7 +100,7 @@ public class OmegaHouses extends JavaPlugin {
 	}
 	
 	private void crearTablas() throws Exception {
-		//TODO Crear tablas
+		//TODO Crear tablas mysql
 	}
 	
 	public static Connection getConexion() {
