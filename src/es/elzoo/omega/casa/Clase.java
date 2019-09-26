@@ -30,7 +30,7 @@ public class Clase {
 		this.cofres = cofres;
 		
 		clases.add(this);
-		clases.sort((a,b) -> b.id-a.id);
+		clases.sort((a,b) -> a.id-b.id);
 		
 		if(mysql) {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
