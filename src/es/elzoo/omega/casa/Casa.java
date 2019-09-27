@@ -250,19 +250,25 @@ public class Casa {
 	}
 	
 	public void vender(Player player) {
+		vender(player, false);
+	}
+	
+	public void vender(Player player, boolean force) {
 		Economy economy = OmegaHouses.getEconomy();
 		
-		if(!this.getOwner().isPresent() || !this.isOwner(player)) {
+		if(!force && (!this.getOwner().isPresent() || !this.isOwner(player))) {
 			player.sendMessage(Mensajes.HOUSE_SELL_NO_OWNER.toString());
 			return;
 		}
 		
-		OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
-		EconomyResponse res = economy.depositPlayer(offPlayer, this.getClase().getPrecio());
-		
-		if(!res.transactionSuccess()) {			
-			player.sendMessage(Mensajes.HOUSE_SELL_ERROR.toString());
-			return;
+		if(!force) {
+			OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
+			EconomyResponse res = economy.depositPlayer(offPlayer, this.getClase().getPrecio());
+			
+			if(!res.transactionSuccess()) {			
+				player.sendMessage(Mensajes.HOUSE_SELL_ERROR.toString());
+				return;
+			}
 		}
 		
 		this.owner = null;
