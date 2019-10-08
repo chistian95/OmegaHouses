@@ -37,13 +37,13 @@ public class GUIVerTrusteds extends GUI {
 		cargarCabezas(guests, pag);
 		
 		if(isOwner) {
-			ponerItem(GUI.getSlot(0, 4), GUI.crearItem(Material.FISHING_ROD, ChatColor.GREEN + "Add trusted"), p -> {
+			ponerItem(GUI.getSlot(0, 4), GUI.crearItem(Material.FISHING_ROD, ChatColor.GRAY + "Add trusted"), p -> {
 				GUINuevoGuest gui = new GUINuevoGuest(casa, "trusted");
 				gui.abrir(p);
 			});
 		}
 		
-		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.REDSTONE, ChatColor.GRAY + "Go Back"), p -> {
+		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.REDSTONE, ChatColor.RED + "Go Back"), p -> {
 			if(isOwner) {
 				GUICasaOwner gui = new GUICasaOwner(casa);
 				gui.abrir(p);
@@ -54,7 +54,7 @@ public class GUIVerTrusteds extends GUI {
 		});
 		
 		if(pag > 1) {
-			ItemStack flecha = GUI.crearItem(Material.ARROW, ChatColor.BOLD+"Previous Page");
+			ItemStack flecha = GUI.crearItem(Material.ARROW, ChatColor.BOLD+""+ChatColor.GRAY+"Previous Page");
 			flecha.setAmount(pag-1);
 			ponerItem(GUI.getSlot(5, 2), flecha, p -> {
 				GUIVerTrusteds gui = new GUIVerTrusteds(casa, isOwner, pag-1);
@@ -63,7 +63,7 @@ public class GUIVerTrusteds extends GUI {
 		}
 		
 		if(guests.size() > 24*pag) {
-			ItemStack flecha = GUI.crearItem(Material.ARROW, ChatColor.BOLD+"Next Page");
+			ItemStack flecha = GUI.crearItem(Material.ARROW, ChatColor.BOLD+""+ChatColor.GRAY+"Next Page");
 			flecha.setAmount(pag+1);
 			ponerItem(GUI.getSlot(5, 6), flecha, p -> {
 				GUIVerTrusteds gui = new GUIVerTrusteds(casa, isOwner, pag+1);
@@ -84,7 +84,7 @@ public class GUIVerTrusteds extends GUI {
 				cabezaMeta.setOwner(player.getName());
 				
 				if(isOwner) {
-					cabezaMeta.setLore(Arrays.asList(new String[] {ChatColor.RED + "- Click to delete -"}));
+					cabezaMeta.setLore(Arrays.asList(new String[] {ChatColor.GRAY + "- Click to delete -"}));
 				}
 				
 				cabeza.setItemMeta(cabezaMeta);
