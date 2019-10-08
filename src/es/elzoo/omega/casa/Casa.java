@@ -142,17 +142,17 @@ public class Casa {
 	public void actualizarCartel() {
 		if(getOwner().isPresent()) {
 			Sign cartelState = (Sign) this.cartel.getBlock().getState();
-			cartelState.setLine(0, ChatColor.BLUE+"Class: "+ChatColor.RESET+clase.id);
-			cartelState.setLine(1, ChatColor.BOLD+"Number: "+ChatColor.RESET+this.numero);
+			cartelState.setLine(0, ChatColor.RED+"Class: "+ChatColor.GRAY+clase.id);
+			cartelState.setLine(1, ChatColor.RED+"Number: "+ChatColor.GRAY+this.numero);
 			cartelState.setLine(2, ChatColor.GRAY+""+ChatColor.STRIKETHROUGH+"SOLD");
 			cartelState.setLine(3, Bukkit.getPlayer(this.owner).getName());
 			cartelState.update();
 		} else {
 			Sign cartelState = (Sign) this.cartel.getBlock().getState();
-			cartelState.setLine(0, ChatColor.BLUE+"Class: "+ChatColor.RESET+clase.id);
-			cartelState.setLine(1, ChatColor.BOLD+"Number: "+ChatColor.RESET+this.numero);
+			cartelState.setLine(0, ChatColor.RED+"Class: "+ChatColor.GRAY+clase.id);
+			cartelState.setLine(1, ChatColor.RED+"Number: "+ChatColor.GRAY+this.numero);
 			cartelState.setLine(2, "");
-			cartelState.setLine(3, ChatColor.GOLD+"$"+clase.precio);
+			cartelState.setLine(3, ChatColor.GRAY+"$"+clase.precio);
 			cartelState.update();
 		}
 	}
@@ -251,19 +251,25 @@ public class Casa {
 	}
 	
 	public void vender(Player player) {
+		vender(player, false);
+	}
+	
+	public void vender(Player player, boolean force) {
 		Economy economy = OmegaHouses.getEconomy();
 		
-		if(!this.getOwner().isPresent() || !this.isOwner(player)) {
+		if(!force && (!this.getOwner().isPresent() || !this.isOwner(player))) {
 			player.sendMessage(Mensajes.HOUSE_SELL_NO_OWNER.toString());
 			return;
 		}
 		
-		OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
-		EconomyResponse res = economy.depositPlayer(offPlayer, this.getClase().getPrecio());
-		
-		if(!res.transactionSuccess()) {			
-			player.sendMessage(Mensajes.HOUSE_SELL_ERROR.toString());
-			return;
+		if(!force) {
+			OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
+			EconomyResponse res = economy.depositPlayer(offPlayer, this.getClase().getPrecio());
+			
+			if(!res.transactionSuccess()) {			
+				player.sendMessage(Mensajes.HOUSE_SELL_ERROR.toString());
+				return;
+			}
 		}
 		
 		this.owner = null;

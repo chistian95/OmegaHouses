@@ -25,21 +25,21 @@ public class GUICasaOwner extends GUI {
 		
 		ponerItem(GUI.getSlot(0, 4), cabeza);
 		
-		ponerItem(GUI.getSlot(2, 2), GUI.crearItem(Material.NAME_TAG, ChatColor.BLUE+"Class: "+casa.getClase().getId()));
-		ponerItem(GUI.getSlot(2, 4), GUI.crearItem(Material.REDSTONE_TORCH_ON, ChatColor.WHITE+"Number: "+casa.getNumero()));
-		ponerItem(GUI.getSlot(2, 6), GUI.crearItem(Material.CHEST, ChatColor.GRAY+"Chests: "+casa.getClase().getCofres()));
+		ponerItem(GUI.getSlot(2, 2), GUI.crearItem(Material.NAME_TAG, ChatColor.RED+"Class: "+ChatColor.GRAY+casa.getClase().getId()));
+		ponerItem(GUI.getSlot(2, 4), GUI.crearItem(Material.REDSTONE_TORCH_ON, ChatColor.RED+"Number: "+ChatColor.GRAY+casa.getNumero()));
+		ponerItem(GUI.getSlot(2, 6), GUI.crearItem(Material.CHEST, ChatColor.RED+"Chests: "+ChatColor.GRAY+casa.getClase().getCofres()));
 		
-		ponerItem(GUI.getSlot(4, 3), GUI.crearItem(Material.IRON_BLOCK, ChatColor.WHITE+"Click to see the Guests"), p -> {
+		ponerItem(GUI.getSlot(4, 3), GUI.crearItem(Material.IRON_BLOCK, ChatColor.RED+"Click to see the "+ChatColor.GRAY+"Guests"), p -> {
 			GUIVerGuests gui = new GUIVerGuests(casa, true);
 			gui.abrir(p);
 		});
 		
-		ponerItem(GUI.getSlot(4, 5), GUI.crearItem(Material.GOLD_BLOCK, ChatColor.GOLD+"Click to see the Trusteds"), p -> {
+		ponerItem(GUI.getSlot(4, 5), GUI.crearItem(Material.GOLD_BLOCK, ChatColor.RED+"Click to see the "+ChatColor.GRAY+"Trusteds"), p -> {
 			GUIVerTrusteds gui = new GUIVerTrusteds(casa, true);
 			gui.abrir(p);
 		});
 		
-		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.TNT, ChatColor.RED+"Click to sell the house"), p -> {
+		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.TNT, ChatColor.DARK_RED+"Click to sell the house"), p -> {
 			p.closeInventory();
 			casa.vender(p);
 		});
