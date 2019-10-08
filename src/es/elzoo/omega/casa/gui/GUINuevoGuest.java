@@ -36,10 +36,11 @@ public class GUINuevoGuest extends GUI {
 			.parallelStream()
 			.sorted((a,b) -> b.getName().compareTo(a.getName()))
 			.map(p -> p.getUniqueId())
+			.filter(p -> !p.equals(casa.getOwner().get()))
 			.collect(Collectors.toList());
 		cargarCabezas(guests, pag);
 		
-		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.REDSTONE, ChatColor.GRAY + "Go Back"), p -> {
+		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.REDSTONE, ChatColor.RED + "Go Back"), p -> {
 			if(accion.equalsIgnoreCase("guest")) {
 				GUIVerGuests gui = new GUIVerGuests(casa, true);
 				gui.abrir(p);
@@ -50,7 +51,7 @@ public class GUINuevoGuest extends GUI {
 		});
 		
 		if(pag > 1) {
-			ItemStack flecha = GUI.crearItem(Material.ARROW, ChatColor.BOLD+"Previous Page");
+			ItemStack flecha = GUI.crearItem(Material.ARROW, ChatColor.BOLD+""+ChatColor.GRAY+"Previous Page");
 			flecha.setAmount(pag-1);
 			ponerItem(GUI.getSlot(5, 2), flecha, p -> {
 				GUINuevoGuest gui = new GUINuevoGuest(casa, accion, pag-1);
@@ -59,7 +60,7 @@ public class GUINuevoGuest extends GUI {
 		}
 		
 		if(guests.size() > 24*pag) {
-			ItemStack flecha = GUI.crearItem(Material.ARROW, ChatColor.BOLD+"Next Page");
+			ItemStack flecha = GUI.crearItem(Material.ARROW, ChatColor.BOLD+""+ChatColor.GRAY+"Next Page");
 			flecha.setAmount(pag+1);
 			ponerItem(GUI.getSlot(5, 6), flecha, p -> {
 				GUINuevoGuest gui = new GUINuevoGuest(casa, accion, pag+1);
