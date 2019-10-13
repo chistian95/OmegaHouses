@@ -22,6 +22,9 @@ public class OmegaHouses extends JavaPlugin {
 	
 	private static Economy economy;
 	
+	public static boolean close_doors;
+	public static int close_doors_delay;
+	
 	@Override
 	public void onEnable() {
 		//Crear configuración con valores por defecto
@@ -30,8 +33,13 @@ public class OmegaHouses extends JavaPlugin {
 		getConfig().addDefault("database", "database");
 		getConfig().addDefault("user", "username");
 		getConfig().addDefault("pass", "password");
+		getConfig().addDefault("close_doors", true);
+		getConfig().addDefault("close_doors_delay", 2);
 		getConfig().options().copyDefaults(true);
 		saveConfig();
+		
+		close_doors = getConfig().getBoolean("close_doors");
+		close_doors_delay = getConfig().getInt("close_doors_delay");
 		
 		if(!setupEconomy()) {
 			this.getLogger().severe("Vault plugin not found. Shutting down...");

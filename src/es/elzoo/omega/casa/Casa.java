@@ -197,6 +197,22 @@ public class Casa {
 				puerta.setOpen(!puerta.isOpen());
 				doorState.setData(puerta);
 				doorState.update();
+				
+				if(OmegaHouses.close_doors) {
+					Bukkit.getScheduler().runTaskLater(plugin, () -> {
+						BlockState doorStateAfter = event.getClickedBlock().getState();					
+						Door puertaAfter = (Door) doorStateAfter.getData();
+						
+						if(puertaAfter.isTopHalf()) {
+							doorStateAfter = event.getClickedBlock().getRelative(BlockFace.DOWN).getState();
+							puertaAfter = (Door) doorStateAfter.getData();
+						}
+						
+						puertaAfter.setOpen(false);
+						doorStateAfter.setData(puertaAfter);
+						doorStateAfter.update();
+					}, OmegaHouses.close_doors_delay*20);
+				}
 			}
 		} else if(event.getClickedBlock().getState().getData() instanceof Door) {
 			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer())) {

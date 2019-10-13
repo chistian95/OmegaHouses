@@ -34,7 +34,7 @@ public class GUICasaOwner extends GUI {
 			gui.abrir(p);
 		});
 		
-		ponerItem(GUI.getSlot(4, 5), GUI.crearItem(Material.GOLD_BLOCK, ChatColor.RED+"Click to see the "+ChatColor.GRAY+"Trusteds"), p -> {
+		ponerItem(GUI.getSlot(4, 5), GUI.crearItem(Material.GOLD_BLOCK, ChatColor.RED+"Click to see the "+ChatColor.GRAY+"Trusted"), p -> {
 			GUIVerTrusteds gui = new GUIVerTrusteds(casa, true);
 			gui.abrir(p);
 		});
