@@ -68,8 +68,6 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
-		System.out.println("Tab complete");
-		System.out.println(args.length+"");
 		if(args.length == 1) {
 			return Arrays.asList(new String[] {"create", "delete", "cancel", "createClass", "info", "buy", "sell", "forceSell"});
 		} else {
@@ -84,8 +82,6 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 						claseId = 0;
 					}
 					final int claseIdF = claseId;
-					
-					System.out.println("Claseid: "+claseIdF);
 					
 					if(claseId > 0) {
 						return Casa.getCasas()

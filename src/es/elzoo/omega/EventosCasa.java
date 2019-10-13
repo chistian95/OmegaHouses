@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.bukkit.Material;
 import org.bukkit.block.Sign;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -62,11 +61,12 @@ public class EventosCasa implements Listener {
 		casa.get().onClickCartel(event.getPlayer());
 	}
 	
-	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if(event.isCancelled()) {
 			return;
 		}
+		
 		if(!event.hasBlock()) {
 			return;
 		}

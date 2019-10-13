@@ -160,7 +160,7 @@ public class Casa {
 	
 	public void onClickCartel(Player player) {
 		Optional<UUID> owner = getOwner();
-		if(!owner.isPresent()) {
+		if(!owner.isPresent() || owner.get() == null) {
 			GUICasaVacia gui = new GUICasaVacia(this);
 			gui.abrir(player);
 			return;
@@ -175,7 +175,7 @@ public class Casa {
 		}
 	}
 	
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	public void onPlayerInteract(PlayerInteractEvent event) {		
 		if(event.getClickedBlock().getType().equals(Material.CHEST)) {
 			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer()) && !event.getPlayer().hasPermission(Permisos.CASA_BYPASS.toString())) {
 				event.setCancelled(true);
