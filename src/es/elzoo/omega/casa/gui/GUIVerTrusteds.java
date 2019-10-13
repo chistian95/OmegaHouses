@@ -26,7 +26,7 @@ public class GUIVerTrusteds extends GUI {
 	}
 	
 	public GUIVerTrusteds(Casa casa, boolean isOwner, int pag) {
-		super(54, "Trusteds list");
+		super(54, "Trusted list");
 		
 		this.isOwner = isOwner;
 		this.casa = casa;

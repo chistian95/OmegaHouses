@@ -22,6 +22,7 @@ import org.bukkit.plugin.Plugin;
 
 import es.elzoo.omega.Mensajes;
 import es.elzoo.omega.OmegaHouses;
+import es.elzoo.omega.Permisos;
 import es.elzoo.omega.Utils;
 import es.elzoo.omega.casa.gui.GUICasaGuest;
 import es.elzoo.omega.casa.gui.GUICasaOwner;
@@ -159,7 +160,7 @@ public class Casa {
 	
 	public void onClickCartel(Player player) {
 		Optional<UUID> owner = getOwner();
-		if(!owner.isPresent()) {
+		if(!owner.isPresent() || owner.get() == null) {
 			GUICasaVacia gui = new GUICasaVacia(this);
 			gui.abrir(player);
 			return;
@@ -174,14 +175,14 @@ public class Casa {
 		}
 	}
 	
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	public void onPlayerInteract(PlayerInteractEvent event) {		
 		if(event.getClickedBlock().getType().equals(Material.CHEST)) {
-			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer())) {
+			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer()) && !event.getPlayer().hasPermission(Permisos.CASA_BYPASS.toString())) {
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
 			}
 		} else if(event.getClickedBlock().getType().equals(Material.IRON_DOOR) || event.getClickedBlock().getType().equals(Material.IRON_DOOR_BLOCK)) {
-			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer()) && !this.isGuest(event.getPlayer())) {
+			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer()) && !this.isGuest(event.getPlayer()) && !event.getPlayer().hasPermission(Permisos.CASA_BYPASS.toString())) {				
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
 			} else {
@@ -197,9 +198,25 @@ public class Casa {
 				puerta.setOpen(!puerta.isOpen());
 				doorState.setData(puerta);
 				doorState.update();
+				
+				if(OmegaHouses.close_doors) {
+					Bukkit.getScheduler().runTaskLater(plugin, () -> {
+						BlockState doorStateAfter = event.getClickedBlock().getState();					
+						Door puertaAfter = (Door) doorStateAfter.getData();
+						
+						if(puertaAfter.isTopHalf()) {
+							doorStateAfter = event.getClickedBlock().getRelative(BlockFace.DOWN).getState();
+							puertaAfter = (Door) doorStateAfter.getData();
+						}
+						
+						puertaAfter.setOpen(false);
+						doorStateAfter.setData(puertaAfter);
+						doorStateAfter.update();
+					}, OmegaHouses.close_doors_delay*20);
+				}
 			}
 		} else if(event.getClickedBlock().getState().getData() instanceof Door) {
-			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer())) {
+			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer()) && !event.getPlayer().hasPermission(Permisos.CASA_BYPASS.toString())) {
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
 			}
