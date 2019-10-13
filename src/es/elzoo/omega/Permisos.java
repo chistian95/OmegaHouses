@@ -3,7 +3,8 @@ package es.elzoo.omega;
 public enum Permisos {
 	CASA_CREAR("omegahouses.create"),
 	CASA_CREAR_CLASE("omegahouses.create.class"),
-	CASA_FORCE_SELL("omegahouses.forcesell");
+	CASA_FORCE_SELL("omegahouses.forcesell"),
+	CASA_BYPASS("omegahouses.bypass");
 	
 	private String permiso;
 	

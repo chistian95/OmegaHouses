@@ -22,6 +22,7 @@ import org.bukkit.plugin.Plugin;
 
 import es.elzoo.omega.Mensajes;
 import es.elzoo.omega.OmegaHouses;
+import es.elzoo.omega.Permisos;
 import es.elzoo.omega.Utils;
 import es.elzoo.omega.casa.gui.GUICasaGuest;
 import es.elzoo.omega.casa.gui.GUICasaOwner;
@@ -176,12 +177,12 @@ public class Casa {
 	
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		if(event.getClickedBlock().getType().equals(Material.CHEST)) {
-			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer())) {
+			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer()) && !event.getPlayer().hasPermission(Permisos.CASA_BYPASS.toString())) {
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
 			}
 		} else if(event.getClickedBlock().getType().equals(Material.IRON_DOOR) || event.getClickedBlock().getType().equals(Material.IRON_DOOR_BLOCK)) {
-			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer()) && !this.isGuest(event.getPlayer())) {
+			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer()) && !this.isGuest(event.getPlayer()) && !event.getPlayer().hasPermission(Permisos.CASA_BYPASS.toString())) {				
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
 			} else {
@@ -199,7 +200,7 @@ public class Casa {
 				doorState.update();
 			}
 		} else if(event.getClickedBlock().getState().getData() instanceof Door) {
-			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer())) {
+			if(!this.isOwner(event.getPlayer()) && !this.isTrusted(event.getPlayer()) && !event.getPlayer().hasPermission(Permisos.CASA_BYPASS.toString())) {
 				event.setCancelled(true);
 				event.getPlayer().sendMessage(Mensajes.NO_PERMISOS.toString());
 			}
