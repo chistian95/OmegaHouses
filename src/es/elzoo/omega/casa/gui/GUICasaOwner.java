@@ -45,8 +45,11 @@ public class GUICasaOwner extends GUI {
 		});
 		
 		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.TNT, ChatColor.DARK_RED+"Click to sell the house"), p -> {
-			p.closeInventory();
-			casa.vender(p);
+			GUIConfirmAction gui = new GUIConfirmAction(this, p2 -> {
+				p2.closeInventory();
+				casa.vender(p2);
+			});			
+			gui.abrir(p);
 		});
 	}
 }
