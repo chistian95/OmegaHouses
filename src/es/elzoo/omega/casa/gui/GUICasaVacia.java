@@ -37,12 +37,15 @@ public class GUICasaVacia extends GUI {
 		itemBuy.setItemMeta(meta);
 		
 		ponerItem(GUI.getSlot(4, 4), itemBuy, p -> {
-			p.closeInventory();
-			if(casa.getClase().isVip()) {
-				casa.comprarVip(p);
-			} else {
-				casa.comprar(p);
-			}
+			GUIConfirmAction gui = new GUIConfirmAction(this, p2 -> {
+				p2.closeInventory();
+				if(casa.getClase().isVip()) {
+					casa.comprarVip(p2);
+				} else {
+					casa.comprar(p2);
+				}
+			});			
+			gui.abrir(p);
 		});
 	}
 }
