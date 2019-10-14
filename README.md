@@ -20,3 +20,4 @@ pass | password | The password of that user
 close_doors | true | If set to true, the main door will be closed after a predefined time
 close_doors_delay | 2 | Delay in seconds to auto close doors
 house_limit | 1 | Number of houses a player can have
+return_percentage | 0.75 | Percetange of money to return when selling a house

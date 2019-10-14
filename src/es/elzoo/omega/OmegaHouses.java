@@ -25,6 +25,7 @@ public class OmegaHouses extends JavaPlugin {
 	public static boolean close_doors;
 	public static int close_doors_delay;
 	public static int house_limit;
+	public static double return_percentage;
 	
 	@Override
 	public void onEnable() {
@@ -37,12 +38,14 @@ public class OmegaHouses extends JavaPlugin {
 		getConfig().addDefault("close_doors", true);
 		getConfig().addDefault("close_doors_delay", 2);
 		getConfig().addDefault("house_limit", 1);
+		getConfig().addDefault("return_percentage", 0.75);
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		
 		close_doors = getConfig().getBoolean("close_doors");
 		close_doors_delay = getConfig().getInt("close_doors_delay");
 		house_limit = getConfig().getInt("house_limit");
+		return_percentage = getConfig().getDouble("return_percentage");
 		
 		if(!setupEconomy()) {
 			this.getLogger().severe("Vault plugin not found. Shutting down...");
