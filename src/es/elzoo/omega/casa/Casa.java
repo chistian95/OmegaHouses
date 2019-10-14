@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -224,6 +225,16 @@ public class Casa {
 	}
 	
 	public void comprar(Player player) {
+		if(this.getClase().isVip()) {
+			player.sendMessage(Mensajes.HOUSE_CANT_BUY_DONOR.toString());
+			return;
+		}
+		
+		if(Casa.getCasaByUser(player.getUniqueId()).size() >= OmegaHouses.house_limit) {
+			player.sendMessage(Mensajes.HOUSE_BUY_LIMIT.toString());
+			return;
+		}
+		
 		Economy economy = OmegaHouses.getEconomy();
 		
 		if(this.getOwner().isPresent()) {
@@ -463,6 +474,10 @@ public class Casa {
 	
 	public static Optional<Casa> getCasaByClaseYNumero(Clase clase, int numero) {
 		return casas.parallelStream().filter(casa -> casa.clase.equals(clase) && casa.numero == numero).findFirst();
+	}
+	
+	public static List<Casa> getCasaByUser(UUID uid) {
+		return casas.parallelStream().filter(casa -> casa.owner != null && casa.owner.equals(uid)).collect(Collectors.toList());
 	}
 	
 	public static Optional<Casa> getCasaByArea(Location loc) {
