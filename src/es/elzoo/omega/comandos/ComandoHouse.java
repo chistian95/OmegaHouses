@@ -421,7 +421,7 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 		}
 		
 		if(args.length != 3) {
-			player.sendMessage(ChatColor.GRAY+"/house sell <class> <number> - Sell a house.");
+			player.sendMessage(ChatColor.GRAY+"/house forceSell <class> <number> - Force sell a house.");
 			return;
 		}
 		
@@ -459,6 +459,6 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 			return;
 		}
 		
-		casa.get().vender(player);
+		casa.get().vender(player, true);
 	}
 }

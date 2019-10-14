@@ -290,9 +290,9 @@ public class Casa {
 			return;
 		}
 		
-		if(!force) {
+		if(!force && !this.getClase().vip) {
 			OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
-			EconomyResponse res = economy.depositPlayer(offPlayer, this.getClase().getPrecio());
+			EconomyResponse res = economy.depositPlayer(offPlayer, this.getClase().getPrecio()*OmegaHouses.return_percentage);
 			
 			if(!res.transactionSuccess()) {			
 				player.sendMessage(Mensajes.HOUSE_SELL_ERROR.toString());
