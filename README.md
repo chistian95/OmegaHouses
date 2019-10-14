@@ -8,6 +8,7 @@ omegahouses.create | Allows to create and delete houses
 omegahouses.create.class | Allows to create house classes
 omegahouses.forcesell | Allows to force sell a house
 omegahouses.bypass | Allows to bypass chest and door protections
+omegahouses.grantToken | Allows to grant donor house tokens
 
 ## Config
 Parameter | Default Value | Description
