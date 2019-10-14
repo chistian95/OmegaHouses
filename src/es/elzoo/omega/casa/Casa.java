@@ -224,6 +224,57 @@ public class Casa {
 		}
 	}
 	
+	public void comprarVip(Player player) {
+		if(!this.getClase().isVip()) {
+			return;
+		}
+		
+		if(Casa.getCasaByUser(player.getUniqueId()).size() >= OmegaHouses.house_limit) {
+			player.sendMessage(Mensajes.HOUSE_BUY_LIMIT.toString());
+			return;
+		}
+		
+		if(this.getOwner().isPresent()) {
+			player.sendMessage(Mensajes.HOUSE_BUY_HAS_OWNER.toString());
+			return;
+		}
+		
+		Optional<CasaToken> token = CasaToken.getToken(player.getUniqueId(), this.getClase());
+		if(!token.isPresent()) {
+			player.sendMessage(Mensajes.HOUSE_NO_TOKEN.toString());
+			return;
+		}
+		
+		token.get().consume();
+		
+		this.owner = player.getUniqueId();
+		actualizarCartel();
+		
+		player.sendMessage(Mensajes.HOUSE_BOUGHT.toString());
+		
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			PreparedStatement stmtHouse = null;
+			
+			try {
+				stmtHouse = OmegaHouses.getConexion().prepareStatement("UPDATE oh_house SET owner=? WHERE clase_id=? AND numero=?;");
+				stmtHouse.setString(1, this.owner.toString());
+				stmtHouse.setInt(2, this.getClase().getId());
+				stmtHouse.setInt(3, this.getNumero());
+				stmtHouse.execute();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmtHouse != null) {
+						stmtHouse.close();
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
 	public void comprar(Player player) {
 		if(this.getClase().isVip()) {
 			player.sendMessage(Mensajes.HOUSE_CANT_BUY_DONOR.toString());
@@ -560,6 +611,18 @@ public class Casa {
 			casa.get().trusteds.add(UUID.fromString(resTrusted.getString(3)));
 		}
 		stmtTrusted.close();
+		
+		PreparedStatement stmtTokens = OmegaHouses.getConexion().prepareStatement("SELECT player, clase_id FROM oh_tokens;");
+		ResultSet resTokens = stmtTokens.executeQuery();
+		while(resTokens.next()) {
+			UUID player = UUID.fromString(resTokens.getString(1));
+			Optional<Clase> clase = Clase.getClaseById(resTokens.getInt(2), true);
+			if(!clase.isPresent()) {
+				continue;
+			}
+			new CasaToken(player, clase.get(), false);
+		}
+		stmtTokens.close();
 	}
 	
 	public static List<Casa> getCasas() {

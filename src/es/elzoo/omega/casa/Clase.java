@@ -32,7 +32,13 @@ public class Clase {
 		this.vip = vip;
 		
 		clases.add(this);
-		clases.sort((a,b) -> a.id-b.id);
+		clases.sort((a,b) -> {
+			if(a.vip != b.vip) {
+				return Boolean.compare(a.vip, b.vip);
+			}
+			
+			return a.id-b.id;
+		});
 		
 		if(mysql) {
 			Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
@@ -112,6 +118,9 @@ public class Clase {
 		Clase other = (Clase) obj;
 		if (id != other.id)
 			return false;
+		if (vip != other.vip) {
+			return false;
+		}
 		return true;
 	}
 }
