@@ -482,14 +482,15 @@ public class Casa {
 	}
 	
 	public static void cargarCasas() throws Exception {		
-		PreparedStatement stmtClass = OmegaHouses.getConexion().prepareStatement("SELECT id,precio,cofres FROM oh_class ORDER BY id;");
+		PreparedStatement stmtClass = OmegaHouses.getConexion().prepareStatement("SELECT id,precio,cofres,vip FROM oh_class ORDER BY id;");
 		ResultSet resClass = stmtClass.executeQuery();
 		while(resClass.next()) {
 			int id = resClass.getInt(1);
 			double precio = resClass.getDouble(2);
 			int cofres = resClass.getInt(3);
+			boolean vip = resClass.getBoolean(4);
 			
-			new Clase(id, precio, cofres);
+			new Clase(id, precio, cofres, false, vip);
 		}
 		stmtClass.close();
 		

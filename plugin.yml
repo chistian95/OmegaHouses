@@ -2,7 +2,7 @@ name: OmegaHouses
 main: es.elzoo.omega.OmegaHouses
 author: Chistian95
 website: https://elzoo.es
-version: 1.0.2
+version: 1.0.3
 depend: [Vault]
 commands:
   house:
