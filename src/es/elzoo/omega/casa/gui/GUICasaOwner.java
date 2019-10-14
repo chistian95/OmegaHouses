@@ -25,7 +25,12 @@ public class GUICasaOwner extends GUI {
 		
 		ponerItem(GUI.getSlot(0, 4), cabeza);
 		
-		ponerItem(GUI.getSlot(2, 2), GUI.crearItem(Material.NAME_TAG, ChatColor.RED+"Class: "+ChatColor.GRAY+casa.getClase().getId()));
+		if(casa.getClase().isVip()) {
+			ponerItem(GUI.getSlot(2, 2), GUI.crearItem(Material.NAME_TAG, ChatColor.RED+"Class: "+ChatColor.GOLD+casa.getClase().getId()));
+		} else {
+			ponerItem(GUI.getSlot(2, 2), GUI.crearItem(Material.NAME_TAG, ChatColor.RED+"Class: "+ChatColor.GRAY+casa.getClase().getId()));
+		}
+		
 		ponerItem(GUI.getSlot(2, 4), GUI.crearItem(Material.REDSTONE_TORCH_ON, ChatColor.RED+"Number: "+ChatColor.GRAY+casa.getNumero()));
 		ponerItem(GUI.getSlot(2, 6), GUI.crearItem(Material.CHEST, ChatColor.RED+"Chests: "+ChatColor.GRAY+casa.getClase().getCofres()));
 		
@@ -40,8 +45,11 @@ public class GUICasaOwner extends GUI {
 		});
 		
 		ponerItem(GUI.getSlot(5, 4), GUI.crearItem(Material.TNT, ChatColor.DARK_RED+"Click to sell the house"), p -> {
-			p.closeInventory();
-			casa.vender(p);
+			GUIConfirmAction gui = new GUIConfirmAction(this, p2 -> {
+				p2.closeInventory();
+				casa.vender(p2);
+			});			
+			gui.abrir(p);
 		});
 	}
 }

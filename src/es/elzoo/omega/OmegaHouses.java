@@ -24,6 +24,8 @@ public class OmegaHouses extends JavaPlugin {
 	
 	public static boolean close_doors;
 	public static int close_doors_delay;
+	public static int house_limit;
+	public static double return_percentage;
 	
 	@Override
 	public void onEnable() {
@@ -35,11 +37,15 @@ public class OmegaHouses extends JavaPlugin {
 		getConfig().addDefault("pass", "password");
 		getConfig().addDefault("close_doors", true);
 		getConfig().addDefault("close_doors_delay", 2);
+		getConfig().addDefault("house_limit", 1);
+		getConfig().addDefault("return_percentage", 0.75);
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		
 		close_doors = getConfig().getBoolean("close_doors");
 		close_doors_delay = getConfig().getInt("close_doors_delay");
+		house_limit = getConfig().getInt("house_limit");
+		return_percentage = getConfig().getDouble("return_percentage");
 		
 		if(!setupEconomy()) {
 			this.getLogger().severe("Vault plugin not found. Shutting down...");
@@ -123,12 +129,25 @@ public class OmegaHouses extends JavaPlugin {
 			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_house(clase_id int, numero int, owner text, pos1 text, pos2 text, cartel text, UNIQUE(clase_id, numero));"),
 			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_guest(clase_id int, numero int, user text);"),
 			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_trusted(clase_id int, numero int, user text);"),
-			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_class(id int, precio double, cofres int);")
+			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_class(id int, precio double, cofres int);"),
+			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_tokens(player text, clase_id int);"),
 		};
 		
 		for(int i=0,len=stmts.length; i<len; i++) {
 			stmts[i].execute();
 			stmts[i].close();
+		}
+		
+		PreparedStatement[] stmtsParches = {
+			conexion.prepareStatement("ALTER TABLE oh_class ADD COLUMN vip BOOLEAN DEFAULT FALSE;"),
+		};
+		for(int i=0,len=stmtsParches.length; i<len; i++) {
+			try {
+				stmtsParches[i].execute();
+				stmtsParches[i].close();
+			} catch(Exception e) {
+				
+			}
 		}
 	}
 	

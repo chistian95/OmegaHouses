@@ -8,6 +8,7 @@ omegahouses.create | Allows to create and delete houses
 omegahouses.create.class | Allows to create house classes
 omegahouses.forcesell | Allows to force sell a house
 omegahouses.bypass | Allows to bypass chest and door protections
+omegahouses.grantToken | Allows to grant donor house tokens
 
 ## Config
 Parameter | Default Value | Description
@@ -19,3 +20,5 @@ user | username | The username to acces the database with
 pass | password | The password of that user
 close_doors | true | If set to true, the main door will be closed after a predefined time
 close_doors_delay | 2 | Delay in seconds to auto close doors
+house_limit | 1 | Number of houses a player can have
+return_percentage | 0.75 | Percetange of money to return when selling a house

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -153,7 +154,11 @@ public class Casa {
 			cartelState.setLine(0, ChatColor.RED+"Class: "+ChatColor.GRAY+clase.id);
 			cartelState.setLine(1, ChatColor.RED+"Number: "+ChatColor.GRAY+this.numero);
 			cartelState.setLine(2, "");
-			cartelState.setLine(3, ChatColor.GRAY+"$"+clase.precio);
+			if(this.getClase().isVip()) {
+				cartelState.setLine(3, ChatColor.GRAY+"DONOR HOUSE");
+			} else {
+				cartelState.setLine(3, ChatColor.GRAY+"$"+clase.precio);
+			}			
 			cartelState.update();
 		}
 	}
@@ -223,7 +228,68 @@ public class Casa {
 		}
 	}
 	
+	public void comprarVip(Player player) {
+		if(!this.getClase().isVip()) {
+			return;
+		}
+		
+		if(Casa.getCasaByUser(player.getUniqueId()).size() >= OmegaHouses.house_limit) {
+			player.sendMessage(Mensajes.HOUSE_BUY_LIMIT.toString());
+			return;
+		}
+		
+		if(this.getOwner().isPresent()) {
+			player.sendMessage(Mensajes.HOUSE_BUY_HAS_OWNER.toString());
+			return;
+		}
+		
+		Optional<CasaToken> token = CasaToken.getToken(player.getUniqueId(), this.getClase());
+		if(!token.isPresent()) {
+			player.sendMessage(Mensajes.HOUSE_NO_TOKEN.toString());
+			return;
+		}
+		
+		token.get().consume();
+		
+		this.owner = player.getUniqueId();
+		actualizarCartel();
+		
+		player.sendMessage(Mensajes.HOUSE_BOUGHT.toString());
+		
+		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+			PreparedStatement stmtHouse = null;
+			
+			try {
+				stmtHouse = OmegaHouses.getConexion().prepareStatement("UPDATE oh_house SET owner=? WHERE clase_id=? AND numero=?;");
+				stmtHouse.setString(1, this.owner.toString());
+				stmtHouse.setInt(2, this.getClase().getId());
+				stmtHouse.setInt(3, this.getNumero());
+				stmtHouse.execute();
+			} catch(Exception e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					if(stmtHouse != null) {
+						stmtHouse.close();
+					}
+				} catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+	
 	public void comprar(Player player) {
+		if(this.getClase().isVip()) {
+			player.sendMessage(Mensajes.HOUSE_CANT_BUY_DONOR.toString());
+			return;
+		}
+		
+		if(Casa.getCasaByUser(player.getUniqueId()).size() >= OmegaHouses.house_limit) {
+			player.sendMessage(Mensajes.HOUSE_BUY_LIMIT.toString());
+			return;
+		}
+		
 		Economy economy = OmegaHouses.getEconomy();
 		
 		if(this.getOwner().isPresent()) {
@@ -279,9 +345,9 @@ public class Casa {
 			return;
 		}
 		
-		if(!force) {
+		if(!force && !this.getClase().vip) {
 			OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(player.getUniqueId());
-			EconomyResponse res = economy.depositPlayer(offPlayer, this.getClase().getPrecio());
+			EconomyResponse res = economy.depositPlayer(offPlayer, this.getClase().getPrecio()*OmegaHouses.return_percentage);
 			
 			if(!res.transactionSuccess()) {			
 				player.sendMessage(Mensajes.HOUSE_SELL_ERROR.toString());
@@ -465,6 +531,10 @@ public class Casa {
 		return casas.parallelStream().filter(casa -> casa.clase.equals(clase) && casa.numero == numero).findFirst();
 	}
 	
+	public static List<Casa> getCasaByUser(UUID uid) {
+		return casas.parallelStream().filter(casa -> casa.owner != null && casa.owner.equals(uid)).collect(Collectors.toList());
+	}
+	
 	public static Optional<Casa> getCasaByArea(Location loc) {
 		return casas.parallelStream().filter(casa -> {
 			if(!loc.getWorld().equals(casa.pos1.getWorld())) {
@@ -482,14 +552,15 @@ public class Casa {
 	}
 	
 	public static void cargarCasas() throws Exception {		
-		PreparedStatement stmtClass = OmegaHouses.getConexion().prepareStatement("SELECT id,precio,cofres FROM oh_class ORDER BY id;");
+		PreparedStatement stmtClass = OmegaHouses.getConexion().prepareStatement("SELECT id,precio,cofres,vip FROM oh_class ORDER BY id;");
 		ResultSet resClass = stmtClass.executeQuery();
 		while(resClass.next()) {
 			int id = resClass.getInt(1);
 			double precio = resClass.getDouble(2);
 			int cofres = resClass.getInt(3);
+			boolean vip = resClass.getBoolean(4);
 			
-			new Clase(id, precio, cofres);
+			new Clase(id, precio, cofres, false, vip);
 		}
 		stmtClass.close();
 		
@@ -544,6 +615,18 @@ public class Casa {
 			casa.get().trusteds.add(UUID.fromString(resTrusted.getString(3)));
 		}
 		stmtTrusted.close();
+		
+		PreparedStatement stmtTokens = OmegaHouses.getConexion().prepareStatement("SELECT player, clase_id FROM oh_tokens;");
+		ResultSet resTokens = stmtTokens.executeQuery();
+		while(resTokens.next()) {
+			UUID player = UUID.fromString(resTokens.getString(1));
+			Optional<Clase> clase = Clase.getClaseById(resTokens.getInt(2), true);
+			if(!clase.isPresent()) {
+				continue;
+			}
+			new CasaToken(player, clase.get(), false);
+		}
+		stmtTokens.close();
 	}
 	
 	public static List<Casa> getCasas() {
