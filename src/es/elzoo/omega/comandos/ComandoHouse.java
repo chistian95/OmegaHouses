@@ -67,7 +67,7 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 		player.sendMessage(ChatColor.GRAY+"/house delete <class> <number> - Deletes the house.");
 		player.sendMessage(ChatColor.GRAY+"/house cancel - Cancels the current assistant.");
 		player.sendMessage(ChatColor.GRAY+"/house createClass <id> <price> <chests> - Create a new class.");
-		player.sendMessage(ChatColor.GRAY+"/house createDonorClass <id> <price> <chests> - Create a new donor class.");
+		player.sendMessage(ChatColor.GRAY+"/house createDonorClass <id> <chests> - Create a new donor class.");
 		player.sendMessage(ChatColor.GRAY+"/house info <class> <number> - Shows the info of the selected house.");
 		player.sendMessage(ChatColor.GRAY+"/house buy <class> <number> - Buy a house.");
 		player.sendMessage(ChatColor.GRAY+"/house sell <class> <number> - Sell a house.");
@@ -240,7 +240,7 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 			return;
 		}
 		
-		if(args.length != 4) {
+		if(args.length != 3) {
 			player.sendMessage(ChatColor.GRAY+"/house createDonorClass <id> <chests> - Create a donor class.");
 			return;
 		}

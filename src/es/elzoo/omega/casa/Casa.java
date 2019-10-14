@@ -154,7 +154,11 @@ public class Casa {
 			cartelState.setLine(0, ChatColor.RED+"Class: "+ChatColor.GRAY+clase.id);
 			cartelState.setLine(1, ChatColor.RED+"Number: "+ChatColor.GRAY+this.numero);
 			cartelState.setLine(2, "");
-			cartelState.setLine(3, ChatColor.GRAY+"$"+clase.precio);
+			if(this.getClase().isVip()) {
+				cartelState.setLine(3, ChatColor.GRAY+"DONOR HOUSE");
+			} else {
+				cartelState.setLine(3, ChatColor.GRAY+"$"+clase.precio);
+			}			
 			cartelState.update();
 		}
 	}

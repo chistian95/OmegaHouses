@@ -27,7 +27,7 @@ public class GUICasaVacia extends GUI {
 		
 		ItemStack itemBuy = null;
 		if(casa.getClase().isVip()) {
-			itemBuy = GUI.crearItem(Material.DOUBLE_PLANT, ChatColor.DARK_RED + "You need an "+ChatColor.ITALIC+"Ownership Certificate "+ChatColor.RED + "to buy this house.");
+			itemBuy = GUI.crearItem(Material.DOUBLE_PLANT, ChatColor.DARK_RED + "You need an "+ChatColor.GRAY+"Ownership Certificate "+ChatColor.DARK_RED + "to buy this house.");
 		} else {
 			itemBuy = GUI.crearItem(Material.DOUBLE_PLANT, ChatColor.DARK_RED + "$"+casa.getClase().getPrecio());
 		}

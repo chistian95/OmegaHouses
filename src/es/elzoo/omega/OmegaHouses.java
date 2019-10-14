@@ -131,13 +131,23 @@ public class OmegaHouses extends JavaPlugin {
 			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_trusted(clase_id int, numero int, user text);"),
 			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_class(id int, precio double, cofres int);"),
 			conexion.prepareStatement("CREATE TABLE IF NOT EXISTS oh_tokens(player text, clase_id int);"),
-			
-			conexion.prepareStatement("IF NOT EXISTS (SELECT NULL FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = 'oh_class' AND column_name = 'vip') THEN ALTER TABLE 'oh_class' ADD COLUMN vip boolean DEFAULT false;"),
 		};
 		
 		for(int i=0,len=stmts.length; i<len; i++) {
 			stmts[i].execute();
 			stmts[i].close();
+		}
+		
+		PreparedStatement[] stmtsParches = {
+			conexion.prepareStatement("ALTER TABLE oh_class ADD COLUMN vip BOOLEAN DEFAULT FALSE;"),
+		};
+		for(int i=0,len=stmtsParches.length; i<len; i++) {
+			try {
+				stmtsParches[i].execute();
+				stmtsParches[i].close();
+			} catch(Exception e) {
+				
+			}
 		}
 	}
 	

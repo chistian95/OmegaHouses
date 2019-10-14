@@ -26,9 +26,9 @@ public enum Mensajes {
 	HOUSE_TRUSTED_REMOVED("&7Trusted removed from house."),
 	HOUSE_BOUGHT("&7House bought."),
 	HOUSE_SOLD("&7House sold."),
-	HOUSE_CANT_BUY_DONOR("&cYou can't buy a donor house. Use an &oOwnership Certificate &cto buy one."),
+	HOUSE_CANT_BUY_DONOR("&cYou can't buy a donor house. Use an &7Ownership Certificate &cto buy one."),
 	HOUSE_BUY_LIMIT("&cYou have reached the limit of houses you can own."),
-	HOUSE_NO_TOKEN("&cYou don't have the required &oOwnership Certificate &cto buy this house.");
+	HOUSE_NO_TOKEN("&cYou don't have the required &7Ownership Certificate &cto buy this house.");
 	
 	private String msg;
 	

@@ -35,7 +35,7 @@ public class GUIElegirClase extends GUI {
 			if(clase.isVip()) {
 				itemMeta.setLore(Arrays.asList(new String[] {
 					ChatColor.RED + "Chests: "+ChatColor.GRAY + clase.getCofres(),
-					ChatColor.RED + "Price: "+ChatColor.GRAY+" - This is a donor house"
+					ChatColor.RED + "Price: "+ChatColor.GRAY+" -"
 				}));
 			} else {
 				itemMeta.setLore(Arrays.asList(new String[] {

@@ -34,7 +34,7 @@ public class Clase {
 		clases.add(this);
 		clases.sort((a,b) -> {
 			if(a.vip != b.vip) {
-				return Boolean.compare(a.vip, b.vip);
+				return Boolean.compare(b.vip, a.vip);
 			}
 			
 			return a.id-b.id;
