@@ -42,6 +42,8 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 			cancelarAsistente(player);
 		} else if(args[0].equalsIgnoreCase("createClass")) {
 			comandoClass(player, args);
+		} else if(args[0].equalsIgnoreCase("createDonorClass")) {
+			comandoDonorClass(player, args);
 		} else if(args[0].equalsIgnoreCase("info")) {
 			info(player, args);
 		} else if(args[0].equalsIgnoreCase("buy")) {
@@ -60,6 +62,7 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 		player.sendMessage(ChatColor.GRAY+"/house delete <class> <number> - Deletes the house.");
 		player.sendMessage(ChatColor.GRAY+"/house cancel - Cancels the current assistant.");
 		player.sendMessage(ChatColor.GRAY+"/house createClass <id> <price> <chests> - Create a new class.");
+		player.sendMessage(ChatColor.GRAY+"/house createDonorClass <id> <price> <chests> - Create a new donor class.");
 		player.sendMessage(ChatColor.GRAY+"/house info <class> <number> - Shows the info of the selected house.");
 		player.sendMessage(ChatColor.GRAY+"/house buy <class> <number> - Buy a house.");
 		player.sendMessage(ChatColor.GRAY+"/house sell <class> <number> - Sell a house.");
@@ -69,7 +72,7 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
 		if(args.length == 1) {
-			return Arrays.asList(new String[] {"create", "delete", "cancel", "createClass", "info", "buy", "sell", "forceSell"});
+			return Arrays.asList(new String[] {"create", "delete", "cancel", "createClass", "createDonorClass", "info", "buy", "sell", "forceSell"});
 		} else {
 			if(args[0].equalsIgnoreCase("delete") || args[0].equalsIgnoreCase("info") || args[0].equalsIgnoreCase("buy") || args[0].equalsIgnoreCase("sell") || args[0].equalsIgnoreCase("forceSell")) {
 				if(args.length == 2) {
@@ -172,7 +175,7 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 		}
 		
 		if(args.length != 4) {
-			player.sendMessage(ChatColor.GRAY+"/house createClass <id> <price> <chests> - Cancels the current assistant.");
+			player.sendMessage(ChatColor.GRAY+"/house createClass <id> <price> <chests> - Cancels a new class.");
 			return;
 		}
 		
@@ -215,8 +218,62 @@ public class ComandoHouse implements CommandExecutor, TabCompleter {
 			return;
 		}
 		
-		new Clase(id, price, chests, true);
+		new Clase(id, price, chests, true, false);
 		player.sendMessage(ChatColor.GREEN + "Class created.");
+	}	
+	
+	private static void comandoDonorClass(Player player, String[] args) {
+		if(!player.hasPermission(Permisos.CASA_CREAR_CLASE.toString())) {
+			player.sendMessage(Mensajes.NO_PERMISOS.toString());
+			return;
+		}
+		
+		if(args.length != 4) {
+			player.sendMessage(ChatColor.GRAY+"/house createDonorClass <id> <price> <chests> - Create a donor class.");
+			return;
+		}
+		
+		int id = 0;
+		try {
+			id = Integer.parseInt(args[1]);
+		} catch(Exception e) {
+			id = 0;			
+		}
+		if(id <= 0) {
+			player.sendMessage(ChatColor.RED + "Error parsing the id. It must be a number bigger than 0.");
+			return;
+		}
+		
+		double price = 0.0;
+		try {
+			price = Double.parseDouble(args[2]);
+		} catch(Exception e) {
+			price = 0.0;			
+		}
+		if(price <= 0.0) {
+			player.sendMessage(ChatColor.RED + "Error parsing the price. It must be a number bigger than 0.");
+			return;
+		}
+		
+		int chests = 0;
+		try {
+			chests = Integer.parseInt(args[3]);
+		} catch(Exception e) {
+			chests = 0;			
+		}
+		if(chests <= 0) {
+			player.sendMessage(ChatColor.RED + "Error parsing the chests. It must be a number bigger than 0.");
+			return;
+		}
+		
+		Optional<Clase> clase = Clase.getClaseById(id, true);
+		if(clase.isPresent()) {
+			player.sendMessage(ChatColor.RED + "There is already a donor class with that ID.");
+			return;
+		}
+		
+		new Clase(id, price, chests, true, true);
+		player.sendMessage(ChatColor.GREEN + "Donor class created.");
 	}	
 	
 	private static void info(Player player, String[] args) {
