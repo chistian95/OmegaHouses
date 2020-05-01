@@ -163,6 +163,7 @@ public class CasaAsistenteCrear {
 		next();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void particulasAsistente() {
 		World mundo = locIzq.getWorld();
 		Location loc = locIzq.clone();
