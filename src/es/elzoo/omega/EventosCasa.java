@@ -9,6 +9,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.material.Door;
 
 import es.elzoo.omega.casa.Casa;
@@ -68,6 +69,10 @@ public class EventosCasa implements Listener {
 		}
 		
 		if(!event.hasBlock()) {
+			return;
+		}
+		
+		if(!event.getHand().equals(EquipmentSlot.HAND)) {
 			return;
 		}
 		

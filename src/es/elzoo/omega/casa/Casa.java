@@ -13,6 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Sound;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -20,6 +21,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.material.Door;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import es.elzoo.omega.Mensajes;
 import es.elzoo.omega.OmegaHouses;
@@ -42,6 +44,8 @@ public class Casa {
 	private Location cartel;
 	private List<UUID> guests;
 	private List<UUID> trusteds;	
+	
+	private BukkitTask tareaDoor;
 	
 	private Casa(Clase clase, int numero, UUID owner, Location pos1, Location pos2, Location cartel, List<UUID> guests, List<UUID> trusteds) {
 		super();
@@ -204,8 +208,14 @@ public class Casa {
 				doorState.setData(puerta);
 				doorState.update();
 				
+				event.getPlayer().playSound(event.getClickedBlock().getLocation(), Sound.BLOCK_IRON_DOOR_OPEN, 1, 1);
+				
 				if(OmegaHouses.close_doors) {
-					Bukkit.getScheduler().runTaskLater(plugin, () -> {
+					if(tareaDoor != null) {
+						tareaDoor.cancel();
+					}
+					
+					tareaDoor = Bukkit.getScheduler().runTaskLater(plugin, () -> {
 						BlockState doorStateAfter = event.getClickedBlock().getState();					
 						Door puertaAfter = (Door) doorStateAfter.getData();
 						
@@ -214,9 +224,15 @@ public class Casa {
 							puertaAfter = (Door) doorStateAfter.getData();
 						}
 						
+						if(!puertaAfter.isOpen()) {
+							return;
+						}
+						
 						puertaAfter.setOpen(false);
 						doorStateAfter.setData(puertaAfter);
 						doorStateAfter.update();
+						
+						event.getPlayer().playSound(event.getClickedBlock().getLocation(), Sound.BLOCK_IRON_DOOR_CLOSE, 1, 1);
 					}, OmegaHouses.close_doors_delay*20);
 				}
 			}
@@ -311,10 +327,16 @@ public class Casa {
 		player.sendMessage(Mensajes.HOUSE_BOUGHT.toString());
 		
 		String msgBroadcast = OmegaHouses.buy_broadcast;
-		msgBroadcast.replaceAll("%player%", player.getName());
-		msgBroadcast.replaceAll("%house%", (clase.id + ": " + numero));
-		msgBroadcast.replaceAll("%amount%", ("$"+this.getClase().getPrecio()));
-		Bukkit.getServer().broadcastMessage(msgBroadcast);
+		if(msgBroadcast.contains("%player%")) {
+			msgBroadcast = msgBroadcast.replaceAll("%player%", player.getName());
+		}		
+		if(msgBroadcast.contains("%house%")) {
+			msgBroadcast = msgBroadcast.replaceAll("%house%", (clase.id + ": " + numero));
+		}
+		if(msgBroadcast.contains("%money%")) {
+			msgBroadcast = msgBroadcast.replaceAll("%money%", ("\\$"+this.getClase().getPrecio()));
+		}		
+		Bukkit.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', msgBroadcast));
 		
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			PreparedStatement stmtHouse = null;

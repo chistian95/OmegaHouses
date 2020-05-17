@@ -40,7 +40,7 @@ public class OmegaHouses extends JavaPlugin {
 		getConfig().addDefault("close_doors_delay", 2);
 		getConfig().addDefault("house_limit", 1);
 		getConfig().addDefault("return_percentage", 0.75);
-		getConfig().addDefault("buy_broadcast", "&6&l%player% bought %house% for %amount%");
+		getConfig().addDefault("buy_broadcast", "&6&l%player% bought %house% for %money%");
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		
