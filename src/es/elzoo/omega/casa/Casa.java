@@ -310,6 +310,12 @@ public class Casa {
 		
 		player.sendMessage(Mensajes.HOUSE_BOUGHT.toString());
 		
+		String msgBroadcast = OmegaHouses.buy_broadcast;
+		msgBroadcast.replaceAll("%player%", player.getName());
+		msgBroadcast.replaceAll("%house%", (clase.id + ": " + numero));
+		msgBroadcast.replaceAll("%amount%", ("$"+this.getClase().getPrecio()));
+		Bukkit.getServer().broadcastMessage(msgBroadcast);
+		
 		Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
 			PreparedStatement stmtHouse = null;
 			
